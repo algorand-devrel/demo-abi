@@ -31,3 +31,8 @@ app_id=`$GOAL app create --creator $creator \
     --local-byteslices 0  | grep 'Created app' |awk '{print $6}' | tr -d '\r'`
 
 echo "App ID: $app_id"
+
+
+$GOAL app method --app-id $app_id \
+ --method "add(uint64,uint64)uint64" \
+ --arg 1 --arg 1 --from ${accts[1]}
