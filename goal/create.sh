@@ -11,8 +11,10 @@ creator=${accts[0]}
 app_name=approval.teal
 clear_name=clear.teal
 
-cp ../$app_name .
-cp ../$clear_name .
+python3 ../contract.py
+
+mv ../$app_name .
+mv ../$clear_name .
 
 $SB copyTo $app_name
 $SB copyTo $clear_name 
