@@ -46,8 +46,8 @@ def typestring(a):
 
 def selector(f: Callable)->str:
     sig = signature(f)
-    args = [typestring(p[1].annotation) for p in sig.parameters.items()]
-    ret = "uint64" #Hardcoding for now, should use the subroutine param
+    args= [typestring(p[1].annotation) for p in sig.parameters.items()]
+    ret = typestring(f.__closure__[0].cell_contents.returnType)
 
     method = "{}({}){}".format(f.__name__, ','.join(args), ret)
 
