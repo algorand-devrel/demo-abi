@@ -1,0 +1,15 @@
+{
+  "name": "demo-abi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "algosdk": "github:algorand/js-algorand-sdk#feature/abi-interaction",
+    "typescript": "^4.4.4"
+  }
+}
