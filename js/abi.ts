@@ -14,17 +14,48 @@ import algosdk from 'algosdk'
 
     const sp = await client.getTransactionParams().do()
 
-    const addMethod = new algosdk.ABIMethod({
-        name:"add", 
-        args:[{type:"uint64"}, {type:"uint64"}], 
-        returns:{type:"uint64"}
+    const sum = new algosdk.ABIMethod({
+        name:"add", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
+    })
+    const sub = new algosdk.ABIMethod({
+        name:"sub", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
+    })
+    const mul = new algosdk.ABIMethod({
+        name:"mul", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
+    })
+    const div = new algosdk.ABIMethod({
+        name:"div", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
     })
 
     const comp = new algosdk.AtomicTransactionComposer()
     comp.addMethodCall({
         appID:appId,
-        method: addMethod,
+        method: sum,
         methodArgs: [1,1],
+        sender:acct.addr,
+        suggestedParams:sp,
+        signer: algosdk.makeBasicAccountTransactionSigner(acct)
+    })
+    comp.addMethodCall({
+        appID:appId,
+        method: sub,
+        methodArgs: [3,1],
+        sender:acct.addr,
+        suggestedParams:sp,
+        signer: algosdk.makeBasicAccountTransactionSigner(acct)
+    })
+    comp.addMethodCall({
+        appID:appId,
+        method: div,
+        methodArgs: [4,2],
+        sender:acct.addr,
+        suggestedParams:sp,
+        signer: algosdk.makeBasicAccountTransactionSigner(acct)
+    })
+    comp.addMethodCall({
+        appID:appId,
+        method: mul,
+        methodArgs: [3,3],
         sender:acct.addr,
         suggestedParams:sp,
         signer: algosdk.makeBasicAccountTransactionSigner(acct)
