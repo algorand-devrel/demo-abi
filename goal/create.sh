@@ -33,6 +33,6 @@ app_id=`$GOAL app create --creator $creator \
 echo "App ID: $app_id"
 
 
-$GOAL app method --app-id $app_id \
- --method "add(uint64,uint64)uint64" \
- --arg 1 --arg 1 --from ${accts[1]}
+#$GOAL app method --app-id $app_id \
+# --method "add(uint64,uint64)uint64" \
+# --arg 1 --arg 1 --from ${accts[1]}

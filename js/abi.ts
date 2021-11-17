@@ -1,15 +1,16 @@
 import algosdk from 'algosdk'
-import { makeBasicAccountTransactionSigner } from 'algosdk/dist/types/src/signer'
 
+(async function a(){
+    const m = "hobby other dilemma add wool nurse insane cinnamon doctor swarm fan same usage sock mirror clever mention situate reason subject curtain tired flat able hunt"
 
-(async function(){
-    const client = new algosdk.Algodv2({
-        token:"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 
-        baseServer:"http://localhost", 
-        port:"4001"
-    })
+    const client = new algosdk.Algodv2(
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 
+        "http://127.0.0.1", 
+        "4001"
+    )
 
-    const acct = algosdk.generateAccount()
+    const acct = algosdk.mnemonicToSecretKey(m)
+    const appId = 1
 
     const sp = await client.getTransactionParams().do()
 
@@ -19,7 +20,6 @@ import { makeBasicAccountTransactionSigner } from 'algosdk/dist/types/src/signer
         returns:{type:"uint64"}
     })
 
-    const appId = 0
     const comp = new algosdk.AtomicTransactionComposer()
     comp.addMethodCall({
         appID:appId,
@@ -27,7 +27,7 @@ import { makeBasicAccountTransactionSigner } from 'algosdk/dist/types/src/signer
         methodArgs: [1,1],
         sender:acct.addr,
         suggestedParams:sp,
-        signer: makeBasicAccountTransactionSigner(acct)
+        signer: algosdk.makeBasicAccountTransactionSigner(acct)
     })
 
     const result = await comp.execute(client, 2)
