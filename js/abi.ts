@@ -9,37 +9,31 @@ import * as fs from 'fs'
         "http://127.0.0.1", 
         "4001"
     )
-    const buff = await fs.readFileSync("../interface.json")
-    let contents = JSON.parse(buff.toString())
 
-    console.log(contents)
-
-
+    
     const acct = algosdk.mnemonicToSecretKey(m)
-    const appId = 27
+
+    const buff = await fs.readFileSync("../interface.json")
+    const contract = new algosdk.ABIContract( JSON.parse(buff.toString()))
+
+    function getMethodByName(name: string): algosdk.ABIMethod  {
+        const m = contract.methods.find((m)=>{ return m.name==name })
+        if(m === undefined){
+            return new algosdk.ABIMethod({name:"", args:[], returns:{type:"void"}})
+        }
+        return m
+    }
 
     const sp = await client.getTransactionParams().do()
 
-    const sum = new algosdk.ABIMethod({
-        name:"add", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
-    })
-    const sub = new algosdk.ABIMethod({
-        name:"sub", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
-    })
-    const mul = new algosdk.ABIMethod({
-        name:"mul", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
-    })
-
-    const div = new algosdk.ABIMethod({
-        name:"div", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
-    })
-
-    const qrem = new algosdk.ABIMethod({
-        name:"qrem", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"(uint64,uint64)"}
-    })
+    const sum = getMethodByName("add")
+    const sub = getMethodByName("sub")
+    const mul = getMethodByName("mul")
+    const div = getMethodByName("div")
+    const qrem = getMethodByName("qrem")
 
     const commonParams = {
-        appID:appId,
+        appID:contract.appId,
         sender:acct.addr,
         suggestedParams:sp,
         signer: algosdk.makeBasicAccountTransactionSigner(acct)

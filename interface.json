@@ -1,6 +1,6 @@
 {
     "name":"demo-abi",
-    "appid":"",
+    "appId":27,
     "methods":[
         {
             "name":"add",
