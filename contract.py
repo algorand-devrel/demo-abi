@@ -56,12 +56,31 @@ def qrem(a: TealType.uint64, b: TealType.uint64)->Expr:
     return Concat(Itob(div(a,b)), Itob(mod(a,b)))
 
 @Subroutine(TealType.bytes)
-def itoa(a: TealType.uint64) -> Expr:
-    return util
+def reverse(a: TealType.bytes)->Expr:
+    idx = ScratchVar()
+    buff = ScratchVar()
+
+    
+    init = idx.store(ExtractUint16(a, Int(0)) + Int(1))
+    cond = idx.load() >= Int(2) 
+    iter = idx.store(idx.load() - Int(1))
+    return Seq(
+        buff.store(Bytes("")),
+        For(init, cond, iter).Do(
+            buff.store(
+                Concat(
+                    buff.load(), 
+                    Extract(a, idx.load(), Int(1))
+                )
+            )
+        ),
+        Concat(Extract(Itob(Len(buff.load())), Int(6), Int(2)), buff.load())
+    )
+
 
 typedict = {
     TealType.uint64:"uint64",
-    TealType.bytes:"bytes",
+    TealType.bytes: "byte[]",
 }
 
 def typestring(a):
@@ -76,6 +95,7 @@ def selector(f: Callable)->str:
         ret = "(uint64,uint64)"
 
     method = "{}({}){}".format(f.__name__, ','.join(args), ret)
+    print(method)
 
     h = hashlib.new('sha512_256')
     h.update(method.encode())
@@ -92,12 +112,16 @@ def approval():
 
     qrem_sel = selector(qrem)
 
+    reverse_sel = selector(reverse)
+
     router = Cond(
         [Txn.application_args[0] == add_sel, Return(wrap_return_int(add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
         [Txn.application_args[0] == sub_sel, Return(wrap_return_int(sub(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
         [Txn.application_args[0] == mul_sel, Return(wrap_return_int(mul(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
         [Txn.application_args[0] == div_sel, Return(wrap_return_int(div(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+
         [Txn.application_args[0] == qrem_sel, Return(wrap_return_bytes(qrem(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+        [Txn.application_args[0] == reverse_sel, Return(wrap_return_bytes(reverse(Txn.application_args[1])))],
     )
 
     return Cond(
@@ -118,7 +142,7 @@ if __name__ == "__main__":
     path = os.path.dirname(os.path.abspath(__file__))
 
     with open(os.path.join(path,"approval.teal"), "w") as f:
-        f.write(compileTeal(approval(), mode=Mode.Application, version=5))
+        f.write(compileTeal(approval(), mode=Mode.Application, version=5, assembleConstants=True))
 
     with open(os.path.join(path, "clear.teal"), "w") as f:
-        f.write(compileTeal(clear(), mode=Mode.Application, version=5))
+        f.write(compileTeal(clear(), mode=Mode.Application, version=5, assembleConstants=True))

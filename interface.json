@@ -1,6 +1,6 @@
 {
     "name":"demo-abi",
-    "appId":27,
+    "appId": 11,
     "methods":[
         {
             "name":"add",
@@ -41,6 +41,14 @@
                 { "type":"uint64" }, { "type":"uint64" }
             ],
             "returns": {"type":"(uint64,uint64)"}
+        },
+        {
+            "name":"reverse",
+            "description":"Reverses a string",
+            "args":[
+                { "type":"byte[]" }
+            ],
+            "returns": {"type":"byte[]"}
         }
     ]
 }
