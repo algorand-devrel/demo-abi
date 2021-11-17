@@ -10,7 +10,7 @@ import algosdk from 'algosdk'
     )
 
     const acct = algosdk.mnemonicToSecretKey(m)
-    const appId = 1
+    const appId = 27
 
     const sp = await client.getTransactionParams().do()
 
@@ -23,8 +23,13 @@ import algosdk from 'algosdk'
     const mul = new algosdk.ABIMethod({
         name:"mul", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
     })
+
     const div = new algosdk.ABIMethod({
         name:"div", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
+    })
+
+    const qrem = new algosdk.ABIMethod({
+        name:"qrem", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"(uint64,uint64)"}
     })
 
     const commonParams = {
@@ -44,12 +49,19 @@ import algosdk from 'algosdk'
     })
     comp.addMethodCall({
         method: div, methodArgs: [4,2], ...commonParams
-     })
+    })
     comp.addMethodCall({
         method: mul, methodArgs: [3,3], ...commonParams
     })
 
+    comp.addMethodCall({
+        method: qrem, methodArgs: [27,5], ...commonParams
+    })
+
     const result = await comp.execute(client, 2)
 
-    console.log(result)
+    for(const idx in result.methodResults){
+        const r = result.methodResults[idx]
+        console.log(r)
+    }
 })()
