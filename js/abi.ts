@@ -1,5 +1,5 @@
 import algosdk from 'algosdk'
-import * as fs from 'fs'
+import * as fs from 'fs' 
 import {Buffer} from 'buffer'
 
 (async function(){

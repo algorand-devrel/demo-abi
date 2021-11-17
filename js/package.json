@@ -11,5 +11,8 @@
   "dependencies": {
     "algosdk": "github:algorand/js-algorand-sdk#feature/abi-interaction",
     "typescript": "^4.4.4"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7"
   }
 }

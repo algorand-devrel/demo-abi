@@ -60,7 +60,6 @@ def reverse(a: TealType.bytes)->Expr:
     idx = ScratchVar()
     buff = ScratchVar()
 
-    
     init = idx.store(ExtractUint16(a, Int(0)) + Int(1))
     cond = idx.load() >= Int(2) 
     iter = idx.store(idx.load() - Int(1))
@@ -68,19 +67,20 @@ def reverse(a: TealType.bytes)->Expr:
         buff.store(Bytes("")),
         For(init, cond, iter).Do(
             buff.store(
-                Concat(
-                    buff.load(), 
-                    Extract(a, idx.load(), Int(1))
-                )
+                Concat(buff.load(), Extract(a, idx.load(), Int(1)))
             )
         ),
-        Concat(Extract(Itob(Len(buff.load())), Int(6), Int(2)), buff.load())
+        prepend_length(buff.load())
     )
+
+@Subroutine(TealType.bytes)
+def prepend_length(b: TealType.bytes)->Expr:
+    return Concat(Extract(Itob(Len(b)), Int(6), Int(2)), b)
 
 
 typedict = {
     TealType.uint64:"uint64",
-    TealType.bytes: "byte[]",
+    TealType.bytes: "string",
 }
 
 def typestring(a):
