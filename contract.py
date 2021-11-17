@@ -55,6 +55,9 @@ def mod(a: TealType.uint64, b: TealType.uint64)->Expr:
 def qrem(a: TealType.uint64, b: TealType.uint64)->Expr:
     return Concat(Itob(div(a,b)), Itob(mod(a,b)))
 
+@Subroutine(TealType.bytes)
+def itoa(a: TealType.uint64) -> Expr:
+    return util
 
 typedict = {
     TealType.uint64:"uint64",

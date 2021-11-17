@@ -1,4 +1,5 @@
 import algosdk from 'algosdk'
+import * as fs from 'fs'
 
 (async function(){
     const m = "hobby other dilemma add wool nurse insane cinnamon doctor swarm fan same usage sock mirror clever mention situate reason subject curtain tired flat able hunt"
@@ -8,6 +9,11 @@ import algosdk from 'algosdk'
         "http://127.0.0.1", 
         "4001"
     )
+    const buff = await fs.readFileSync("../interface.json")
+    let contents = JSON.parse(buff.toString())
+
+    console.log(contents)
+
 
     const acct = algosdk.mnemonicToSecretKey(m)
     const appId = 27
