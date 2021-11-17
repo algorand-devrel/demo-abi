@@ -1,4 +1,4 @@
-import algosdk from 'algosdk'
+import algosdk, { Transaction } from 'algosdk'
 import * as fs from 'fs' 
 import {Buffer} from 'buffer'
 
@@ -31,6 +31,8 @@ import {Buffer} from 'buffer'
 
     const reverse  = getMethodByName("reverse")
 
+    const txntest  = getMethodByName("txntest")
+
 
     const sp = await client.getTransactionParams().do()
     const commonParams = {
@@ -58,19 +60,33 @@ import {Buffer} from 'buffer'
     //    method: qrem, methodArgs: [27,5], ...commonParams
     //})
 
+    //comp.addMethodCall({
+    //    method: reverse, 
+    //    methodArgs: [
+    //        Buffer.from("reverse me please")
+    //    ], 
+    //    ...commonParams
+    //})
+
     comp.addMethodCall({
-        method: reverse, 
+        method: txntest, 
         methodArgs: [
-            Buffer.from("reverse me please")
+            10000,
+            {
+                txn: new Transaction({
+                    from: acct.addr,
+                    to: acct.addr,
+                    amount: 10000,
+                    ...sp
+                }),
+                signer: algosdk.makeBasicAccountTransactionSigner(acct)
+            },
+            1000
         ], 
         ...commonParams
     })
 
-    const gtxn = comp.buildGroup()
-    for(const idx in gtxn){
-        const t =gtxn[idx]
-        console.log(t.txn.appArgs)
-    }
+    console.log(comp.buildGroup())
 
     const result = await comp.execute(client, 2)
 

@@ -77,6 +77,11 @@ def reverse(a: TealType.bytes)->Expr:
 def prepend_length(b: TealType.bytes)->Expr:
     return Concat(Extract(Itob(Len(b)), Int(6), Int(2)), b)
 
+def txntest(a: TealType.uint64, b: TealType.uint64):
+    return And(
+        Gtxn[Txn.group_index()-Int(1)].amount() == a,
+        Gtxn[Txn.group_index()-Int(1)].fee() == b
+    )
 
 typedict = {
     TealType.uint64:"uint64",
@@ -95,8 +100,11 @@ def selector(f: Callable)->str:
         ret = "(uint64,uint64)"
 
     method = "{}({}){}".format(f.__name__, ','.join(args), ret)
-    print(method)
 
+    return hashy(method)
+
+
+def hashy(method: str)->Bytes:
     h = hashlib.new('sha512_256')
     h.update(method.encode())
     return Bytes(h.digest()[:4])
@@ -114,6 +122,8 @@ def approval():
 
     reverse_sel = selector(reverse)
 
+    txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
+
     router = Cond(
         [Txn.application_args[0] == add_sel, Return(wrap_return_int(add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
         [Txn.application_args[0] == sub_sel, Return(wrap_return_int(sub(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
@@ -122,6 +132,8 @@ def approval():
 
         [Txn.application_args[0] == qrem_sel, Return(wrap_return_bytes(qrem(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
         [Txn.application_args[0] == reverse_sel, Return(wrap_return_bytes(reverse(Txn.application_args[1])))],
+
+        [Txn.application_args[0] == txn_sel, Return(wrap_return_int(txntest(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
     )
 
     return Cond(
