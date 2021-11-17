@@ -24,14 +24,14 @@ import * as fs from 'fs'
         return m
     }
 
+    const sum   = getMethodByName("add")
+    const sub   = getMethodByName("sub")
+    const mul   = getMethodByName("mul")
+    const div   = getMethodByName("div")
+    const qrem  = getMethodByName("qrem")
+
+
     const sp = await client.getTransactionParams().do()
-
-    const sum = getMethodByName("add")
-    const sub = getMethodByName("sub")
-    const mul = getMethodByName("mul")
-    const div = getMethodByName("div")
-    const qrem = getMethodByName("qrem")
-
     const commonParams = {
         appID:contract.appId,
         sender:acct.addr,
