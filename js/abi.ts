@@ -1,6 +1,6 @@
 import algosdk from 'algosdk'
 
-(async function a(){
+(async function(){
     const m = "hobby other dilemma add wool nurse insane cinnamon doctor swarm fan same usage sock mirror clever mention situate reason subject curtain tired flat able hunt"
 
     const client = new algosdk.Algodv2(
@@ -27,40 +27,29 @@ import algosdk from 'algosdk'
         name:"div", args:[{type:"uint64"}, {type:"uint64"}], returns:{type:"uint64"}
     })
 
+    const commonParams = {
+        appID:appId,
+        sender:acct.addr,
+        suggestedParams:sp,
+        signer: algosdk.makeBasicAccountTransactionSigner(acct)
+    }
+
     const comp = new algosdk.AtomicTransactionComposer()
+
     comp.addMethodCall({
-        appID:appId,
-        method: sum,
-        methodArgs: [1,1],
-        sender:acct.addr,
-        suggestedParams:sp,
-        signer: algosdk.makeBasicAccountTransactionSigner(acct)
+        method: sum, methodArgs: [1,1], ...commonParams
     })
     comp.addMethodCall({
-        appID:appId,
-        method: sub,
-        methodArgs: [3,1],
-        sender:acct.addr,
-        suggestedParams:sp,
-        signer: algosdk.makeBasicAccountTransactionSigner(acct)
+        method: sub, methodArgs: [3,1], ...commonParams
     })
     comp.addMethodCall({
-        appID:appId,
-        method: div,
-        methodArgs: [4,2],
-        sender:acct.addr,
-        suggestedParams:sp,
-        signer: algosdk.makeBasicAccountTransactionSigner(acct)
-    })
+        method: div, methodArgs: [4,2], ...commonParams
+     })
     comp.addMethodCall({
-        appID:appId,
-        method: mul,
-        methodArgs: [3,3],
-        sender:acct.addr,
-        suggestedParams:sp,
-        signer: algosdk.makeBasicAccountTransactionSigner(acct)
+        method: mul, methodArgs: [3,3], ...commonParams
     })
 
     const result = await comp.execute(client, 2)
+
     console.log(result)
 })()
