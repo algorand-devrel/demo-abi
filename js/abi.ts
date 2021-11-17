@@ -13,12 +13,13 @@ import * as fs from 'fs'
     
     const acct = algosdk.mnemonicToSecretKey(m)
 
-    const buff = await fs.readFileSync("../interface.json")
+    const buff = fs.readFileSync("../interface.json")
     const contract = new algosdk.ABIContract( JSON.parse(buff.toString()))
 
     function getMethodByName(name: string): algosdk.ABIMethod  {
         const m = contract.methods.find((m)=>{ return m.name==name })
         if(m === undefined){
+            throw Error("Method undefined")
             return new algosdk.ABIMethod({name:"", args:[], returns:{type:"void"}})
         }
         return m
@@ -53,7 +54,6 @@ import * as fs from 'fs'
     comp.addMethodCall({
         method: mul, methodArgs: [3,3], ...commonParams
     })
-
     comp.addMethodCall({
         method: qrem, methodArgs: [27,5], ...commonParams
     })
