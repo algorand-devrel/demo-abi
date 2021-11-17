@@ -18,10 +18,10 @@ import * as fs from 'fs'
 
     function getMethodByName(name: string): algosdk.ABIMethod  {
         const m = contract.methods.find((m)=>{ return m.name==name })
-        if(m === undefined){
+
+        if(m === undefined)
             throw Error("Method undefined")
-            return new algosdk.ABIMethod({name:"", args:[], returns:{type:"void"}})
-        }
+        
         return m
     }
 
