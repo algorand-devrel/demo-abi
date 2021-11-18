@@ -1,7 +1,7 @@
 import os
 from inspect import *
 from typing import Callable
-import hashlib
+from Cryptodome.Hash import SHA512
 
 from pyteal import *
 
@@ -113,9 +113,10 @@ def selector(f: Callable)->str:
 
 
 def hashy(method: str)->Bytes:
-    h = hashlib.new('sha512_256')
-    h.update(method.encode())
-    return Bytes(h.digest()[:4])
+
+    chksum = SHA512.new(truncate="256")
+    chksum.update(method.encode())
+    return Bytes(chksum.digest()[:4])
 
 
 def approval():
