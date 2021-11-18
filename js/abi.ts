@@ -28,10 +28,10 @@ import {Buffer} from 'buffer'
     const mul   = getMethodByName("mul")
     const div   = getMethodByName("div")
     const qrem  = getMethodByName("qrem")
-
     const reverse  = getMethodByName("reverse")
-
     const txntest  = getMethodByName("txntest")
+    const optin  = getMethodByName("_optIn")
+    const closeout  = getMethodByName("_closeOut")
 
 
     const sp = await client.getTransactionParams().do()
@@ -44,29 +44,29 @@ import {Buffer} from 'buffer'
 
     const comp = new algosdk.AtomicTransactionComposer()
 
-    //comp.addMethodCall({
-    //    method: sum, methodArgs: [1,1], ...commonParams
-    //})
-    //comp.addMethodCall({
-    //    method: sub, methodArgs: [3,1], ...commonParams
-    //})
-    //comp.addMethodCall({
-    //    method: div, methodArgs: [4,2], ...commonParams
-    //})
-    //comp.addMethodCall({
-    //    method: mul, methodArgs: [3,3], ...commonParams
-    //})
-    //comp.addMethodCall({
-    //    method: qrem, methodArgs: [27,5], ...commonParams
-    //})
+    comp.addMethodCall({
+        method: sum, methodArgs: [1,1], ...commonParams
+    })
+    comp.addMethodCall({
+        method: sub, methodArgs: [3,1], ...commonParams
+    })
+    comp.addMethodCall({
+        method: div, methodArgs: [4,2], ...commonParams
+    })
+    comp.addMethodCall({
+        method: mul, methodArgs: [3,3], ...commonParams
+    })
+    comp.addMethodCall({
+        method: qrem, methodArgs: [27,5], ...commonParams
+    })
 
-    //comp.addMethodCall({
-    //    method: reverse, 
-    //    methodArgs: [
-    //        Buffer.from("reverse me please")
-    //    ], 
-    //    ...commonParams
-    //})
+    comp.addMethodCall({
+        method: reverse, 
+        methodArgs: [
+            Buffer.from("desrever yllufsseccus")
+        ], 
+        ...commonParams
+    })
 
     comp.addMethodCall({
         method: txntest, 
@@ -86,7 +86,13 @@ import {Buffer} from 'buffer'
         ...commonParams
     })
 
-    console.log(comp.buildGroup())
+    //comp.addMethodCall({
+    //    method: optin, methodArgs: [1], ...commonParams, onComplete: algosdk.OnApplicationComplete.OptInOC
+    //})
+    const group = comp.buildGroup()
+    for(const idx in group){
+        console.log(group[idx].txn)
+    }
 
     const result = await comp.execute(client, 2)
 

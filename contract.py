@@ -83,6 +83,14 @@ def txntest(a: TealType.uint64, b: TealType.uint64):
         Gtxn[Txn.group_index()-Int(1)].fee() == b
     )
 
+@Subroutine(TealType.uint64)
+def optin(a: TealType.uint64)->Expr:
+    return a
+
+@Subroutine(TealType.uint64)
+def closeout(a: TealType.uint64)->Expr:
+    return a
+
 typedict = {
     TealType.uint64:"uint64",
     TealType.bytes: "string",
@@ -123,6 +131,7 @@ def approval():
     reverse_sel = selector(reverse)
 
     txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
+
 
     router = Cond(
         [Txn.application_args[0] == add_sel, Return(wrap_return_int(add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
