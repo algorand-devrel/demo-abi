@@ -13,7 +13,7 @@ import {Buffer} from 'buffer'
     
     const acct = algosdk.mnemonicToSecretKey(m)
 
-    const buff = fs.readFileSync("../interface.json")
+    const buff = fs.readFileSync("../contract.json")
     const contract = new algosdk.ABIContract( JSON.parse(buff.toString()))
 
     function getMethodByName(name: string): algosdk.ABIMethod  {
@@ -23,20 +23,21 @@ import {Buffer} from 'buffer'
         return m
     }
 
-    const sum   = getMethodByName("add")
-    const sub   = getMethodByName("sub")
-    const mul   = getMethodByName("mul")
-    const div   = getMethodByName("div")
-    const qrem  = getMethodByName("qrem")
-    const reverse  = getMethodByName("reverse")
-    const txntest  = getMethodByName("txntest")
-    const optin  = getMethodByName("_optIn")
+    const sum       = getMethodByName("add")
+    const sub       = getMethodByName("sub")
+    const mul       = getMethodByName("mul")
+    const div       = getMethodByName("div")
+    const qrem      = getMethodByName("qrem")
+    const reverse   = getMethodByName("reverse")
+    const txntest   = getMethodByName("txntest")
+
+    const optin     = getMethodByName("_optIn")
     const closeout  = getMethodByName("_closeOut")
 
 
     const sp = await client.getTransactionParams().do()
     const commonParams = {
-        appID:contract.appId,
+        appId:contract.appId,
         sender:acct.addr,
         suggestedParams:sp,
         signer: algosdk.makeBasicAccountTransactionSigner(acct)
@@ -89,6 +90,7 @@ import {Buffer} from 'buffer'
     //comp.addMethodCall({
     //    method: optin, methodArgs: [1], ...commonParams, onComplete: algosdk.OnApplicationComplete.OptInOC
     //})
+
     const group = comp.buildGroup()
     for(const idx in group){
         console.log(group[idx].txn)
