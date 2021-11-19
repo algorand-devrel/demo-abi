@@ -1,4 +1,4 @@
-import algosdk, { Transaction } from 'algosdk'
+import algosdk, { decodeAddress, Transaction } from 'algosdk'
 import * as fs from 'fs' 
 import {Buffer} from 'buffer'
 
@@ -84,19 +84,25 @@ import {Buffer} from 'buffer'
     //    ...commonParams
     //})
 
-    comp.addMethodCall({
-        method: getMethodByName("_closeOut"),
-        methodArgs: [1], 
-        onComplete: algosdk.OnApplicationComplete.CloseOutOC,
-        ...commonParams
-    })
+    //comp.addMethodCall({
+    //    method: getMethodByName("_closeOut"),
+    //    methodArgs: [1], 
+    //    onComplete: algosdk.OnApplicationComplete.CloseOutOC,
+    //    ...commonParams
+    //})
 
-    comp.addMethodCall({
-        method: getMethodByName("_optIn"),
-        methodArgs: [1], 
-        onComplete: algosdk.OnApplicationComplete.OptInOC,
-        ...commonParams
-    })
+    //comp.addMethodCall({
+    //    method: getMethodByName("_optIn"),
+    //    methodArgs: [1], 
+    //    onComplete: algosdk.OnApplicationComplete.OptInOC,
+    //    ...commonParams
+    //})
+
+    //comp.addMethodCall({
+    //    method:getMethodByName("min_bal"),
+    //    methodArgs:["FHWVNNZOALOSBKYFKEUIZC56SGPLLAREZFFWLXCPBBVVISXDLPTRFR7EIQ"],
+    //    ...commonParams
+    //})
 
     const group = comp.buildGroup()
     for(const idx in group){

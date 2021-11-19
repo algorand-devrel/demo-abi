@@ -29,25 +29,25 @@ signer = AccountTransactionSigner(sk)
 sp = client.suggested_params()
 
 comp = AtomicTransactionComposer()
-comp.add_method_call(c.app_id, get_method("add"), addr, sp, signer, method_args=[1,1])
-comp.add_method_call(c.app_id, get_method("sub"), addr, sp, signer, method_args=[3,1])
-comp.add_method_call(c.app_id, get_method("div"), addr, sp, signer, method_args=[4,2])
-comp.add_method_call(c.app_id, get_method("mul"), addr, sp, signer, method_args=[3,2])
-comp.add_method_call(c.app_id, get_method("qrem"), addr, sp, signer, method_args=[27,5])
-comp.add_method_call(c.app_id, get_method("reverse"), addr, sp, signer, method_args=["desrever yllufsseccus"])
 
-txn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
-comp.add_method_call(c.app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000])
+#comp.add_method_call(c.app_id, get_method("add"), addr, sp, signer, method_args=[1,1])
+#comp.add_method_call(c.app_id, get_method("sub"), addr, sp, signer, method_args=[3,1])
+#comp.add_method_call(c.app_id, get_method("div"), addr, sp, signer, method_args=[4,2])
+#comp.add_method_call(c.app_id, get_method("mul"), addr, sp, signer, method_args=[3,2])
+#comp.add_method_call(c.app_id, get_method("qrem"), addr, sp, signer, method_args=[27,5])
+#comp.add_method_call(c.app_id, get_method("reverse"), addr, sp, signer, method_args=["desrever yllufsseccus"])
 
-comp.add_method_call(c.app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
+#txn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
+#comp.add_method_call(c.app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000])
 
-comp.add_method_call(c.app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
-comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
+#comp.add_method_call(c.app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
+
+#comp.add_method_call(c.app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
+#comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
+
+comp.add_method_call(c.app_id, get_method("min_bal"), addr, sp, signer, method_args=["FHWVNNZOALOSBKYFKEUIZC56SGPLLAREZFFWLXCPBBVVISXDLPTRFR7EIQ"])
 
 resp = comp.execute(client, 2)
-
-
-
 
 for result in resp.abi_results:
     print(result.return_value)

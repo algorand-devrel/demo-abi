@@ -99,6 +99,10 @@ def manyargs(a: TealType.uint64, b: TealType.uint64, c: TealType.uint64, d: Teal
             q: TealType.uint64, r: TealType.uint64, s: TealType.uint64, t: TealType.uint64):
             return a
 
+@Subroutine(TealType.uint64)
+def min_bal(idx: TealType.uint64):
+    return MinBalance(Txn.accounts[idx]) 
+
 typedict = {
     TealType.uint64:"uint64",
     TealType.bytes: "string",
@@ -145,6 +149,8 @@ def approval():
 
     txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
 
+    min_sel = selector(min_bal)
+
 
     router = Cond(
             [Txn.application_args[0] == add_sel, wrap_return_int(add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2])))],
@@ -178,6 +184,8 @@ def approval():
                 ExtractUint64(Txn.application_args[15], Int(32)),
                 ExtractUint64(Txn.application_args[15], Int(40))
             ))],
+
+            [Txn.application_args[0] == min_sel, wrap_return_int(min_bal(Btoi(Txn.application_args[1])))],
 
             [Txn.application_args[0] == optin_sel, wrap_return_int(_optIn(Btoi(Txn.application_args[1])))],
             [Txn.application_args[0] == close_sel, wrap_return_int(_closeOut(Btoi(Txn.application_args[1])))],
