@@ -1,6 +1,6 @@
 {
     "name":"demo-abi",
-    "appId": 15,
+    "appId": 1,
     "methods":[
         {
             "name":"add",
@@ -42,6 +42,18 @@
             "name":"txntest",
             "description":"just check it",
             "args":[{"type":"uint64"}, {"type": "pay"}, {"type":"uint64"}],
+            "returns":{"type": "uint64"}
+        },
+        {
+            "name":"manyargs",
+            "description":"Try to send 20 arguments",
+            "args":[
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"}
+            ],
             "returns":{"type": "uint64"}
         },
         {

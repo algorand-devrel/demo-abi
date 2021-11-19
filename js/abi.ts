@@ -8,7 +8,7 @@ import {Buffer} from 'buffer'
     const client = new algosdk.Algodv2(
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 
         "http://127.0.0.1", 
-        "4001"
+        "4002"
     )
     
     const acct = algosdk.mnemonicToSecretKey(m)
@@ -45,45 +45,56 @@ import {Buffer} from 'buffer'
 
     const comp = new algosdk.AtomicTransactionComposer()
 
-    comp.addMethodCall({
-        method: sum, methodArgs: [1,1], ...commonParams
-    })
-    comp.addMethodCall({
-        method: sub, methodArgs: [3,1], ...commonParams
-    })
-    comp.addMethodCall({
-        method: div, methodArgs: [4,2], ...commonParams
-    })
-    comp.addMethodCall({
-        method: mul, methodArgs: [3,3], ...commonParams
-    })
-    comp.addMethodCall({
-        method: qrem, methodArgs: [27,5], ...commonParams
-    })
+    //comp.addMethodCall({
+    //    method: sum, methodArgs: [1,1], ...commonParams
+    //})
+    //comp.addMethodCall({
+    //    method: sub, methodArgs: [3,1], ...commonParams
+    //})
+    //comp.addMethodCall({
+    //    method: div, methodArgs: [4,2], ...commonParams
+    //})
+    //comp.addMethodCall({
+    //    method: mul, methodArgs: [3,3], ...commonParams
+    //})
+    //comp.addMethodCall({
+    //    method: qrem, methodArgs: [27,5], ...commonParams
+    //})
+
+    //comp.addMethodCall({
+    //    method: reverse, 
+    //    methodArgs: [
+    //        Buffer.from("desrever yllufsseccus")
+    //    ], 
+    //    ...commonParams
+    //})
+
+    //comp.addMethodCall({
+    //    method: txntest, 
+    //    methodArgs: [
+    //        10000,
+    //        {
+    //            txn: new Transaction({
+    //                from: acct.addr,
+    //                to: acct.addr,
+    //                amount: 10000,
+    //                ...sp
+    //            }),
+    //            signer: algosdk.makeBasicAccountTransactionSigner(acct)
+    //        },
+    //        1000
+    //    ], 
+    //    ...commonParams
+    //})
 
     comp.addMethodCall({
-        method: reverse, 
-        methodArgs: [
-            Buffer.from("desrever yllufsseccus")
-        ], 
-        ...commonParams
-    })
-
-    comp.addMethodCall({
-        method: txntest, 
-        methodArgs: [
-            10000,
-            {
-                txn: new Transaction({
-                    from: acct.addr,
-                    to: acct.addr,
-                    amount: 10000,
-                    ...sp
-                }),
-                signer: algosdk.makeBasicAccountTransactionSigner(acct)
-            },
-            1000
-        ], 
+        method: getMethodByName("manyargs"),
+        methodArgs:[
+            1,1,1,1,1,
+            1,1,1,1,1,
+            1,1,1,1,1,
+            1,1,1,1,1
+        ],
         ...commonParams
     })
 

@@ -91,6 +91,14 @@ def optin(a: TealType.uint64)->Expr:
 def closeout(a: TealType.uint64)->Expr:
     return a
 
+@Subroutine(TealType.uint64)
+def manyargs(a: TealType.uint64, b: TealType.uint64, c: TealType.uint64, d: TealType.uint64,
+            e: TealType.uint64, f: TealType.uint64, g: TealType.uint64, h: TealType.uint64,
+            i: TealType.uint64, j: TealType.uint64, k: TealType.uint64, l: TealType.uint64,
+            m: TealType.uint64, n: TealType.uint64, o: TealType.uint64, p: TealType.uint64,
+            q: TealType.uint64, r: TealType.uint64, s: TealType.uint64, t: TealType.uint64):
+            return a
+
 typedict = {
     TealType.uint64:"uint64",
     TealType.bytes: "string",
@@ -130,6 +138,7 @@ def approval():
     qrem_sel = selector(qrem)
 
     reverse_sel = selector(reverse)
+    many_sel = selector(manyargs)
 
     txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
 
@@ -144,6 +153,28 @@ def approval():
         [Txn.application_args[0] == reverse_sel, Return(wrap_return_bytes(reverse(Txn.application_args[1])))],
 
         [Txn.application_args[0] == txn_sel, Return(wrap_return_int(txntest(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+        [Txn.application_args[0] == many_sel, Return(wrap_return_int(manyargs(
+            Btoi(Txn.application_args[1]), 
+            Btoi(Txn.application_args[2]),
+            Btoi(Txn.application_args[3]),
+            Btoi(Txn.application_args[4]),
+            Btoi(Txn.application_args[5]),
+            Btoi(Txn.application_args[6]),
+            Btoi(Txn.application_args[7]),
+            Btoi(Txn.application_args[8]),
+            Btoi(Txn.application_args[9]),
+            Btoi(Txn.application_args[10]),
+            Btoi(Txn.application_args[11]),
+            Btoi(Txn.application_args[12]),
+            Btoi(Txn.application_args[13]),
+            Btoi(Txn.application_args[14]),
+            ExtractUint64(Txn.application_args[15], Int(0)),
+            ExtractUint64(Txn.application_args[15], Int(8)),
+            ExtractUint64(Txn.application_args[15], Int(16)),
+            ExtractUint64(Txn.application_args[15], Int(24)),
+            ExtractUint64(Txn.application_args[15], Int(32)),
+            ExtractUint64(Txn.application_args[15], Int(40))
+        )))],
     )
 
     return Cond(
