@@ -84,11 +84,11 @@ def txntest(a: TealType.uint64, b: TealType.uint64):
     )
 
 @Subroutine(TealType.uint64)
-def optin(a: TealType.uint64)->Expr:
+def _optIn(a: TealType.uint64)->Expr:
     return a
 
 @Subroutine(TealType.uint64)
-def closeout(a: TealType.uint64)->Expr:
+def _closeOut(a: TealType.uint64)->Expr:
     return a
 
 @Subroutine(TealType.uint64)
@@ -140,49 +140,66 @@ def approval():
     reverse_sel = selector(reverse)
     many_sel = selector(manyargs)
 
+    optin_sel = selector(_optIn)
+    close_sel = selector(_closeOut)
+
     txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
 
 
-    router = Cond(
-        [Txn.application_args[0] == add_sel, Return(wrap_return_int(add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
-        [Txn.application_args[0] == sub_sel, Return(wrap_return_int(sub(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
-        [Txn.application_args[0] == mul_sel, Return(wrap_return_int(mul(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
-        [Txn.application_args[0] == div_sel, Return(wrap_return_int(div(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+    router = Seq(
+        Cond(
+            [Txn.application_args[0] == add_sel, Return(wrap_return_int(add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+            [Txn.application_args[0] == sub_sel, Return(wrap_return_int(sub(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+            [Txn.application_args[0] == mul_sel, Return(wrap_return_int(mul(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+            [Txn.application_args[0] == div_sel, Return(wrap_return_int(div(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
 
-        [Txn.application_args[0] == qrem_sel, Return(wrap_return_bytes(qrem(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
-        [Txn.application_args[0] == reverse_sel, Return(wrap_return_bytes(reverse(Txn.application_args[1])))],
+            [Txn.application_args[0] == qrem_sel, Return(wrap_return_bytes(qrem(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+            [Txn.application_args[0] == reverse_sel, Return(wrap_return_bytes(reverse(Txn.application_args[1])))],
 
-        [Txn.application_args[0] == txn_sel, Return(wrap_return_int(txntest(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
-        [Txn.application_args[0] == many_sel, Return(wrap_return_int(manyargs(
-            Btoi(Txn.application_args[1]), 
-            Btoi(Txn.application_args[2]),
-            Btoi(Txn.application_args[3]),
-            Btoi(Txn.application_args[4]),
-            Btoi(Txn.application_args[5]),
-            Btoi(Txn.application_args[6]),
-            Btoi(Txn.application_args[7]),
-            Btoi(Txn.application_args[8]),
-            Btoi(Txn.application_args[9]),
-            Btoi(Txn.application_args[10]),
-            Btoi(Txn.application_args[11]),
-            Btoi(Txn.application_args[12]),
-            Btoi(Txn.application_args[13]),
-            Btoi(Txn.application_args[14]),
-            ExtractUint64(Txn.application_args[15], Int(0)),
-            ExtractUint64(Txn.application_args[15], Int(8)),
-            ExtractUint64(Txn.application_args[15], Int(16)),
-            ExtractUint64(Txn.application_args[15], Int(24)),
-            ExtractUint64(Txn.application_args[15], Int(32)),
-            ExtractUint64(Txn.application_args[15], Int(40))
-        )))],
+            [Txn.application_args[0] == txn_sel,    Return(wrap_return_int(txntest(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))))],
+            [Txn.application_args[0] == many_sel,   Return(wrap_return_int(manyargs(
+                Btoi(Txn.application_args[1]), 
+                Btoi(Txn.application_args[2]),
+                Btoi(Txn.application_args[3]),
+                Btoi(Txn.application_args[4]),
+                Btoi(Txn.application_args[5]),
+                Btoi(Txn.application_args[6]),
+                Btoi(Txn.application_args[7]),
+                Btoi(Txn.application_args[8]),
+                Btoi(Txn.application_args[9]),
+                Btoi(Txn.application_args[10]),
+                Btoi(Txn.application_args[11]),
+                Btoi(Txn.application_args[12]),
+                Btoi(Txn.application_args[13]),
+                Btoi(Txn.application_args[14]),
+                ExtractUint64(Txn.application_args[15], Int(0)),
+                ExtractUint64(Txn.application_args[15], Int(8)),
+                ExtractUint64(Txn.application_args[15], Int(16)),
+                ExtractUint64(Txn.application_args[15], Int(24)),
+                ExtractUint64(Txn.application_args[15], Int(32)),
+                ExtractUint64(Txn.application_args[15], Int(40))
+            )))],
+            
+            [Txn.application_args[0] == optin_sel,    Return(wrap_return_int(_optIn(Btoi(Txn.application_args[1]))))],
+            [Txn.application_args[0] == close_sel,    Return(wrap_return_int(_closeOut(Btoi(Txn.application_args[1]))))],
+        ),
+        Int(1)
     )
 
+
+
+    @Subroutine(TealType.uint64)
+    def route_or_allow()->Expr:
+        return If(
+            Txn.application_args.length()>Int(0)
+        ).Then(router).Else(Return(Int(1)))
+
     return Cond(
-        [Txn.application_id() == Int(0),                        Return(Int(1))],
-        [Txn.on_completion()  == OnComplete.DeleteApplication,  Return(is_app_creator)],
-        [Txn.on_completion()  == OnComplete.UpdateApplication,  Return(is_app_creator)],
-        [Txn.on_completion()  == OnComplete.CloseOut,           Return(Int(1))],
-        [Txn.on_completion()  == OnComplete.OptIn,              Return(Int(1))],
+        [Txn.application_id() == Int(0),                        Int(1)],
+        [Txn.on_completion()  == OnComplete.DeleteApplication,  is_app_creator],
+        [Txn.on_completion()  == OnComplete.UpdateApplication,  is_app_creator],
+        [Txn.on_completion()  == OnComplete.CloseOut,           route_or_allow()],
+        [Txn.on_completion()  == OnComplete.OptIn,              route_or_allow()],
         [Txn.on_completion()  == OnComplete.NoOp,               router],
     )
 

@@ -23,18 +23,6 @@ import {Buffer} from 'buffer'
         return m
     }
 
-    const sum       = getMethodByName("add")
-    const sub       = getMethodByName("sub")
-    const mul       = getMethodByName("mul")
-    const div       = getMethodByName("div")
-    const qrem      = getMethodByName("qrem")
-    const reverse   = getMethodByName("reverse")
-    const txntest   = getMethodByName("txntest")
-
-    const optin     = getMethodByName("_optIn")
-    const closeout  = getMethodByName("_closeOut")
-
-
     const sp = await client.getTransactionParams().do()
     const commonParams = {
         appId:contract.appId,
@@ -46,26 +34,24 @@ import {Buffer} from 'buffer'
     const comp = new algosdk.AtomicTransactionComposer()
 
     //comp.addMethodCall({
-    //    method: sum, methodArgs: [1,1], ...commonParams
+    //    method: getMethodByName("add"), methodArgs: [1,1], ...commonParams
     //})
     //comp.addMethodCall({
-    //    method: sub, methodArgs: [3,1], ...commonParams
+    //    method: getMethodByName("sub"), methodArgs: [3,1], ...commonParams
     //})
     //comp.addMethodCall({
-    //    method: div, methodArgs: [4,2], ...commonParams
+    //    method: getMethodByName("div"), methodArgs: [4,2], ...commonParams
     //})
     //comp.addMethodCall({
-    //    method: mul, methodArgs: [3,3], ...commonParams
+    //    method: getMethodByName("mul"), methodArgs: [3,3], ...commonParams
     //})
     //comp.addMethodCall({
-    //    method: qrem, methodArgs: [27,5], ...commonParams
+    //    method: getMethodByName("qrem"), methodArgs: [27,5], ...commonParams
     //})
 
     //comp.addMethodCall({
-    //    method: reverse, 
-    //    methodArgs: [
-    //        Buffer.from("desrever yllufsseccus")
-    //    ], 
+    //    method: getMethodByName("reverse"), 
+    //    methodArgs: [ Buffer.from("desrever yllufsseccus") ], 
     //    ...commonParams
     //})
 
@@ -87,20 +73,30 @@ import {Buffer} from 'buffer'
     //    ...commonParams
     //})
 
+    //comp.addMethodCall({
+    //    method: getMethodByName("manyargs"),
+    //    methodArgs:[
+    //        1,1,1,1,1,
+    //        1,1,1,1,1,
+    //        1,1,1,1,1,
+    //        1,1,1,1,1
+    //    ],
+    //    ...commonParams
+    //})
+
     comp.addMethodCall({
-        method: getMethodByName("manyargs"),
-        methodArgs:[
-            1,1,1,1,1,
-            1,1,1,1,1,
-            1,1,1,1,1,
-            1,1,1,1,1
-        ],
+        method: getMethodByName("_closeOut"),
+        methodArgs: [1], 
+        onComplete: algosdk.OnApplicationComplete.CloseOutOC,
         ...commonParams
     })
 
-    //comp.addMethodCall({
-    //    method: optin, methodArgs: [1], ...commonParams, onComplete: algosdk.OnApplicationComplete.OptInOC
-    //})
+    comp.addMethodCall({
+        method: getMethodByName("_optIn"),
+        methodArgs: [1], 
+        onComplete: algosdk.OnApplicationComplete.OptInOC,
+        ...commonParams
+    })
 
     const group = comp.buildGroup()
     for(const idx in group){
