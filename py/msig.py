@@ -1,10 +1,14 @@
-from algosdk.v2client.algod import AlgodClient 
+from algosdk.v2client.algod import AlgodClient
 from algosdk.future.transaction import Multisig, MultisigTransaction
 from algosdk.account import generate_account
 from algosdk.future.transaction import PaymentTxn
-from algosdk.future.atomic_transaction_composer import MultisigTransactionSigner, AtomicTransactionComposer, TransactionWithSigner
+from algosdk.atomic_transaction_composer import (
+    MultisigTransactionSigner,
+    AtomicTransactionComposer,
+    TransactionWithSigner,
+)
 
-client = AlgodClient("a"*64, "http://localhost:4001")
+client = AlgodClient("a" * 64, "http://localhost:4001")
 
 sk1, addr1 = generate_account()
 sk2, addr2 = generate_account()
@@ -16,8 +20,8 @@ sp = client.suggested_params()
 comp = AtomicTransactionComposer()
 comp.add_transaction(
     TransactionWithSigner(
-        MultisigTransaction(PaymentTxn(msig.address(), sp, addr1, 100000), msig),
-        MultisigTransactionSigner([sk1,sk2])
+        PaymentTxn(msig.address(), sp, addr1, 100000),
+        MultisigTransactionSigner(msig, [sk1, sk2]),
     )
 )
 
