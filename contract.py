@@ -1,6 +1,6 @@
 import os
 from inspect import *
-from typing import Callable
+from typing import Callable, List
 from Cryptodome.Hash import SHA512
 
 from pyteal import *
@@ -67,6 +67,32 @@ def reverse(a: TealType.bytes) -> Expr:
 
 
 @Subroutine(TealType.bytes)
+def concat_strings(b: TealType.bytes)->Expr:
+    idx = ScratchVar()
+    buff = ScratchVar()
+    pos = ScratchVar()
+
+    init = idx.store(Int(0)) 
+    cond = idx.load()<ExtractUint16(b, Int(0))  
+    iter = idx.store(idx.load() + Int(1))
+    return Seq(
+        buff.store(Bytes("")),
+        pos.store(Int(0)), 
+        For(init, cond, iter).Do(
+            Seq(
+                pos.store(ExtractUint16(b, (idx.load()*Int(2)) + Int(2)) + Int(2)),
+                buff.store(
+                    Concat(
+                        buff.load(),
+                        Extract(b, pos.load()+Int(2), ExtractUint16(b, pos.load()))
+                    )
+                )
+            )
+        ),
+        prepend_length(buff.load())
+    )
+
+@Subroutine(TealType.bytes)
 def prepend_length(b: TealType.bytes) -> Expr:
     return Concat(Extract(Itob(Len(b)), Int(6), Int(2)), b)
 
@@ -116,27 +142,26 @@ def manyargs(
 
 @Subroutine(TealType.uint64)
 def min_bal(idx: TealType.uint64):
-    #return MinBalance(Txn.accounts[idx]) should be passed the actual index, currently py-sdk passes index without implicit + 1 from sender
+    # should be passed the actual index, currently py-sdk passes index without implicit + 1 from sender
+    # return MinBalance(Txn.accounts[idx]) 
     return MinBalance(Txn.accounts[idx+Int(1)])
 
 
 def typestring(a):
-    typedict = {
-        TealType.uint64: "uint64",
-        TealType.bytes: "string",
-    }
+    typedict = { TealType.uint64: "uint64", TealType.bytes: "string", }
     return typedict[a]
 
-
+# Utility function to turn a subroutine callable into its selector
 def selector(f: Callable) -> str:
     sig = signature(f)
     args = [typestring(p[1].annotation) for p in sig.parameters.items()]
     ret = typestring(f.__closure__[0].cell_contents.returnType)
     method = "{}({}){}".format(f.__name__, ",".join(args), ret)
-
     return hashy(method)
 
 
+# Utility function to take the string version of a method signature and
+# return the 4 byte selector
 def hashy(method: str) -> Bytes:
     chksum = SHA512.new(truncate="256")
     chksum.update(method.encode())
@@ -162,6 +187,7 @@ def approval():
     qrem_sel = hashy("qrem(uint64,uin64)(uint64,uint64)")
     txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
     min_sel = hashy("min_bal(account)uint64")
+    concat_sel = hashy("concat_strings(string[])string")
 
     router = Cond(
         [
@@ -243,11 +269,15 @@ def approval():
             Txn.application_args[0] == close_sel,
             wrap_return_int(_closeOut(Btoi(Txn.application_args[1]))),
         ],
+        [
+            Txn.application_args[0] == concat_sel,
+            wrap_return_bytes(concat_strings(Txn.application_args[1])),
+        ],
     )
 
     @Subroutine(TealType.uint64)
     def route_or_allow() -> Expr:
-        return If(Txn.application_args.length() > Int(0)).Then(router).Else(Int(0))
+        return If(Txn.application_args.length() > Int(0)).Then(router).Else(Int(1))
 
     return Cond(
         [Txn.application_id() == Int(0), Int(1)],

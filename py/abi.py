@@ -47,25 +47,32 @@ comp = AtomicTransactionComposer()
 # comp.add_method_call(c.app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
 # comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
 
+#comp.add_method_call(
+#    c.app_id,
+#    get_method("min_bal"),
+#    addr,
+#    sp,
+#    signer,
+#    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
+#)
+
 comp.add_method_call(
     c.app_id,
-    get_method("min_bal"),
-    addr,
+    get_method("concat_strings"),
+    addr, 
     sp,
     signer,
-    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
+    method_args=[["this", "string", "is", "joined"]]
 )
-
 
 
 txns = comp.build_group()
 
 write_to_file([t.txn for t in txns], "tmp.txns")
-for t in txns:
-    print(t.txn.app_args)
-    print(t.txn.accounts)
 
 resp = comp.execute(client, 2)
+
+print(client.pending_transaction_info(resp.tx_ids[0]))
 
 for result in resp.abi_results:
     print(result.return_value)

@@ -24,6 +24,7 @@ import {Buffer} from 'buffer'
     }
 
     const sp = await client.getTransactionParams().do()
+
     const commonParams = {
         appId:contract.appId,
         sender:acct.addr,
@@ -104,10 +105,11 @@ import {Buffer} from 'buffer'
     //    ...commonParams
     //})
 
-    const group = comp.buildGroup()
-    for(const idx in group){
-        console.log(group[idx].txn)
-    }
+    comp.addMethodCall({
+        method: getMethodByName("concat_strings"),
+        methodArgs: [["this", "string", "is", "joined"]],
+        ...commonParams
+    })
 
     const result = await comp.execute(client, 2)
 
