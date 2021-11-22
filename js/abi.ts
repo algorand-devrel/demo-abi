@@ -110,6 +110,8 @@ import {Buffer} from 'buffer'
         methodArgs: [["this", "string", "is", "joined"]],
         ...commonParams
     })
+    const group = comp.buildGroup()
+    console.log(group[0].txn.appArgs)
 
     const result = await comp.execute(client, 2)
 

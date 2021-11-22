@@ -45,6 +45,12 @@
             "returns":{"type": "uint64"}
         },
         {
+            "name":"min_bal",
+            "desc":"get the min balance requirement for this account",
+            "args":[{"type":"account"}],
+            "returns":{"type": "uint64"}
+        },
+        {
             "name":"concat_strings",
             "desc":"concat some strings",
             "args":[{"type":"string[]"}],

@@ -47,23 +47,23 @@ comp = AtomicTransactionComposer()
 # comp.add_method_call(c.app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
 # comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
 
+comp.add_method_call(
+    c.app_id,
+    get_method("min_bal"),
+    addr,
+    sp,
+    signer,
+    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
+)
+
 #comp.add_method_call(
 #    c.app_id,
-#    get_method("min_bal"),
+#    get_method("concat_strings"),
 #    addr,
 #    sp,
 #    signer,
-#    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
+#    method_args=[["this", "string", "is", "joined"]]
 #)
-
-comp.add_method_call(
-    c.app_id,
-    get_method("concat_strings"),
-    addr, 
-    sp,
-    signer,
-    method_args=[["this", "string", "is", "joined"]]
-)
 
 
 txns = comp.build_group()

@@ -142,9 +142,7 @@ def manyargs(
 
 @Subroutine(TealType.uint64)
 def min_bal(idx: TealType.uint64):
-    # should be passed the actual index, currently py-sdk passes index without implicit + 1 from sender
-    # return MinBalance(Txn.accounts[idx]) 
-    return MinBalance(Txn.accounts[idx+Int(1)])
+    return MinBalance(Txn.accounts[idx])
 
 
 def typestring(a):
