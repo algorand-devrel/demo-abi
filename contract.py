@@ -150,6 +150,8 @@ def typestring(a):
     return typedict[a]
 
 # Utility function to turn a subroutine callable into its selector
+# It produces the method signature `name(type1,type2,...)returnType`
+# which is passed to the `hashy` method to be turned into the method selector
 def selector(f: Callable) -> str:
     sig = signature(f)
     args = [typestring(p[1].annotation) for p in sig.parameters.items()]

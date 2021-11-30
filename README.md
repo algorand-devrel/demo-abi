@@ -1,25 +1,20 @@
 Algorand AVM ABI
 -----------------
 
+**This is a Work In Progress**
+Some functionality is not yet supported by all the SDKs. Expect errors for now.
 
-# Method Selector
+Demo of implementation for contract and client code that conforms to the ARC4 spec.
 
-```
-Method signature: add(uint64,uint64)uint128
-SHA-512/256 hash (in hex): 8aa3b61f0f1965c3a1cbfa91d46b24e54c67270184ff89dc114e877b1753254a
-Method selector (in hex): 8aa3b61f
-```
+https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0004.md
 
 
-# Method Description
+ARC-004 or the Algorand ABI is a specification for encoding and decoding of data types and a standard for handling method calls.
 
-```ts
-interface Method {
-  name: string,
-  desc?: string,
-  args: Array<{ name: string, type: string, desc?: string }>,
-  returns?: { type: string, desc?: string }
-}
-```
 
-# Types
+## Contents
+contract.py - A PyTEAL contract that generates a set of methods that can be called as ABI methods
+contract.json - A JSON file describing the interface of the contract to be read by SDK clients
+js/ - Directory containing a TypeScript client to read in the contract.json file and call methods
+py/ - Directory containing a Python client to read in the contract.json file and call methods
+
