@@ -21,14 +21,15 @@ py/ - Directory containing a Python client to read in the contract.json file and
 
 ## Development
 
-Install the [sandbox](https://github.com/algorand/sandbox)
-
-Start it with the `dev` configuration.
+Install the [sandbox](https://github.com/algorand/sandbox) to start a local private node and start it with the `dev` configuration.
 
 If you're in the sandbox directory run:
 ```
 ./sandbox up dev
 ```
+
+
+First make sure you have the latest [PyTEAL](https://github.com/algorand/pyteal) package installed
 
 Next, clone this repository and cd to the root directory.
 
@@ -43,4 +44,5 @@ Run `./manage.sh update`
     This will recreate the teal source files, copy them to the sandbox, and call the update app transaction.
     It will use the cached app id from `.app_id` 
 
-Check the Language specific README files to see how to call the methods.
+
+Update the `contract.json` file by swapping in your new app id, then check the Language specific README files to see how to call the methods.

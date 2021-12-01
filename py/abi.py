@@ -18,10 +18,9 @@ def get_method(name: str) -> Method:
     for m in c.methods:
         if m.name == name:
             return m
-    raise Exception("No method with that name")
+    raise Exception("No method with the name {}".format(name))
 
-
-mnemonic = "hobby other dilemma add wool nurse insane cinnamon doctor swarm fan same usage sock mirror clever mention situate reason subject curtain tired flat able hunt"
+mnemonic = "train pause genre sound energy sorry ketchup purse urban lobster until engage ordinary furnace media clown sure goddess genuine pioneer nephew maximum vivid absorb silk"
 
 sk = to_private_key(mnemonic)
 addr = to_public_key(mnemonic)
@@ -32,38 +31,38 @@ sp = client.suggested_params()
 
 comp = AtomicTransactionComposer()
 
-# comp.add_method_call(c.app_id, get_method("add"), addr, sp, signer, method_args=[1,1])
-# comp.add_method_call(c.app_id, get_method("sub"), addr, sp, signer, method_args=[3,1])
-# comp.add_method_call(c.app_id, get_method("div"), addr, sp, signer, method_args=[4,2])
-# comp.add_method_call(c.app_id, get_method("mul"), addr, sp, signer, method_args=[3,2])
-# comp.add_method_call(c.app_id, get_method("qrem"), addr, sp, signer, method_args=[27,5])
-# comp.add_method_call(c.app_id, get_method("reverse"), addr, sp, signer, method_args=["desrever yllufsseccus"])
+comp.add_method_call(c.app_id, get_method("add"), addr, sp, signer, method_args=[1,1])
+comp.add_method_call(c.app_id, get_method("sub"), addr, sp, signer, method_args=[3,1])
+comp.add_method_call(c.app_id, get_method("div"), addr, sp, signer, method_args=[4,2])
+comp.add_method_call(c.app_id, get_method("mul"), addr, sp, signer, method_args=[3,2])
+comp.add_method_call(c.app_id, get_method("qrem"), addr, sp, signer, method_args=[27,5])
+comp.add_method_call(c.app_id, get_method("reverse"), addr, sp, signer, method_args=["desrever yllufsseccus"])
 
-# txn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
-# comp.add_method_call(c.app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000])
+txn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
+comp.add_method_call(c.app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000])
 
-# comp.add_method_call(c.app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
+comp.add_method_call(c.app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
 
-# comp.add_method_call(c.app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
-# comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
+comp.add_method_call(c.app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
+comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
 
-comp.add_method_call(
-    c.app_id,
-    get_method("min_bal"),
-    addr,
-    sp,
-    signer,
-    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
-)
-
-# comp.add_method_call(
+#comp.add_method_call(
 #    c.app_id,
-#    get_method("concat_strings"),
+#    get_method("min_bal"),
 #    addr,
 #    sp,
 #    signer,
-#    method_args=[["this", "string", "is", "joined"]]
-# )
+#    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
+#)
+
+comp.add_method_call(
+   c.app_id,
+   get_method("concat_strings"),
+   addr,
+   sp,
+   signer,
+   method_args=[["this", "string", "is", "joined"]]
+)
 
 
 txns = comp.build_group()
