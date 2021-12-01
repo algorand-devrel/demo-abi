@@ -46,3 +46,5 @@ Run `./manage.sh update`
 
 
 Update the `contract.json` file by swapping in your new app id, then check the Language specific README files to see how to call the methods.
+
+You'll also need to tweak the hostnames/ports for the algod client in their respective directories depending on how your local sandbox is configured.
