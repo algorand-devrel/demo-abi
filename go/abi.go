@@ -63,7 +63,7 @@ func main() {
 	signer := future.BasicAccountTransactionSigner{Account: acct}
 
 	atc := future.MakeAtomicTransactionComposer()
-	err = atc.AddMethodCall(future.AddMethodCallParams{
+	_ = atc.AddMethodCall(future.AddMethodCallParams{
 		AppID:           contract.AppId,
 		Method:          getMethod(contract, "add"),
 		MethodArgs:      []interface{}{1, 1},
@@ -72,9 +72,42 @@ func main() {
 		OnComplete:      types.NoOpOC,
 	}, signer)
 
-	if err != nil {
-		log.Fatalf("Failed to add method call: %+v", err)
-	}
+	_ = atc.AddMethodCall(future.AddMethodCallParams{
+		AppID:           contract.AppId,
+		Method:          getMethod(contract, "sub"),
+		MethodArgs:      []interface{}{3, 1},
+		Sender:          acct.Address,
+		SuggestedParams: sp,
+		OnComplete:      types.NoOpOC,
+	}, signer)
+
+	_ = atc.AddMethodCall(future.AddMethodCallParams{
+		AppID:           contract.AppId,
+		Method:          getMethod(contract, "mul"),
+		MethodArgs:      []interface{}{3, 2},
+		Sender:          acct.Address,
+		SuggestedParams: sp,
+		OnComplete:      types.NoOpOC,
+	}, signer)
+
+	_ = atc.AddMethodCall(future.AddMethodCallParams{
+		AppID:           contract.AppId,
+		Method:          getMethod(contract, "div"),
+		MethodArgs:      []interface{}{4, 2},
+		Sender:          acct.Address,
+		SuggestedParams: sp,
+		OnComplete:      types.NoOpOC,
+	}, signer)
+
+	_ = atc.AddMethodCall(future.AddMethodCallParams{
+		AppID:           contract.AppId,
+		Method:          getMethod(contract, "qrem"),
+		MethodArgs:      []interface{}{27, 5},
+		Sender:          acct.Address,
+		SuggestedParams: sp,
+		OnComplete:      types.NoOpOC,
+	}, signer)
+
 	_, _, ret, err := atc.Execute(client, context.Background(), 2)
 	if err != nil {
 		log.Fatalf("Failed to execute call: %+v", err)
