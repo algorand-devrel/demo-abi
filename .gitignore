@@ -1,4 +1,3 @@
-*.teal
 node_modules/
 .venv/
 .app_id
