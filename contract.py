@@ -6,17 +6,15 @@ from Cryptodome.Hash import SHA512
 from pyteal import *
 
 
+# All return values are prefixed with this const and logged.
+# Only the last log message with this prefix will be considered the return value
 return_prefix = Bytes("base16", "0x151f7c75")  # Literally hash('return')[:4]
 
 
+# Utility function to concat the return const and log the return value
 @Subroutine(TealType.uint64)
-def wrap_return_bytes(b: TealType.bytes) -> Expr:
+def wrap_return(b: TealType.bytes) -> Expr:
     return Seq(Log(Concat(return_prefix, b)), Int(1))
-
-
-@Subroutine(TealType.uint64)
-def wrap_return_int(b: TealType.uint64) -> Expr:
-    return Seq(Log(Concat(return_prefix, Itob(b))), Int(1))
 
 
 @Subroutine(TealType.uint64)
@@ -62,35 +60,37 @@ def reverse(a: TealType.bytes) -> Expr:
         For(init, cond, iter).Do(
             buff.store(Concat(buff.load(), Extract(a, idx.load(), Int(1))))
         ),
+        # Prefix bytestring with its length, according to spec
         prepend_length(buff.load()),
     )
 
 
 @Subroutine(TealType.bytes)
-def concat_strings(b: TealType.bytes)->Expr:
+def concat_strings(b: TealType.bytes) -> Expr:
     idx = ScratchVar()
     buff = ScratchVar()
     pos = ScratchVar()
 
-    init = idx.store(Int(0)) 
-    cond = idx.load()<ExtractUint16(b, Int(0))  
+    init = idx.store(Int(0))
+    cond = idx.load() < ExtractUint16(b, Int(0))
     iter = idx.store(idx.load() + Int(1))
     return Seq(
         buff.store(Bytes("")),
-        pos.store(Int(0)), 
+        pos.store(Int(0)),
         For(init, cond, iter).Do(
             Seq(
-                pos.store(ExtractUint16(b, (idx.load()*Int(2)) + Int(2)) + Int(2)),
+                pos.store(ExtractUint16(b, (idx.load() * Int(2)) + Int(2)) + Int(2)),
                 buff.store(
                     Concat(
                         buff.load(),
-                        Extract(b, pos.load()+Int(2), ExtractUint16(b, pos.load()))
+                        Extract(b, pos.load() + Int(2), ExtractUint16(b, pos.load())),
                     )
-                )
+                ),
             )
         ),
-        prepend_length(buff.load())
+        prepend_length(buff.load()),
     )
+
 
 @Subroutine(TealType.bytes)
 def prepend_length(b: TealType.bytes) -> Expr:
@@ -146,13 +146,17 @@ def min_bal(idx: TealType.uint64):
 
 
 def typestring(a):
-    typedict = { TealType.uint64: "uint64", TealType.bytes: "string", }
+    typedict = {
+        TealType.uint64: "uint64",
+        TealType.bytes: "string",
+    }
     return typedict[a]
+
 
 # Utility function to turn a subroutine callable into its selector
 # It produces the method signature `name(type1,type2,...)returnType`
 # which is passed to the `hashy` method to be turned into the method selector
-def selector(f: Callable) -> str:
+def get_method_selector(f: Callable) -> str:
     sig = signature(f)
     args = [typestring(p[1].annotation) for p in sig.parameters.items()]
     ret = typestring(f.__closure__[0].cell_contents.returnType)
@@ -171,68 +175,80 @@ def hashy(method: str) -> Bytes:
 def approval():
     is_app_creator = Txn.sender() == Global.creator_address()
 
-    add_sel = selector(add)
-    sub_sel = selector(sub)
-    mul_sel = selector(mul)
-    div_sel = selector(div)
+    # Get a method selector from the python function signature, used later to route to 
+    # correct subroutine
+    add_sel = get_method_selector(add)
+    sub_sel = get_method_selector(sub)
+    mul_sel = get_method_selector(mul)
+    div_sel = get_method_selector(div)
+    reverse_sel = get_method_selector(reverse)
+    many_sel = get_method_selector(manyargs)
+    optin_sel = get_method_selector(_optIn)
+    close_sel = get_method_selector(_closeOut)
 
-    reverse_sel = selector(reverse)
-    many_sel = selector(manyargs)
-
-
-    optin_sel = selector(_optIn)
-    close_sel = selector(_closeOut)
-
-    # Types Dont work with selector function
-    qrem_sel = hashy("qrem(uint64,uin64)(uint64,uint64)")
+    # Types that dont work with get_method_selector function, so we cheat
+    qrem_sel = hashy("qrem(uint64,uint64)(uint64,uint64)")
     txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
     min_sel = hashy("min_bal(account)uint64")
     concat_sel = hashy("concat_strings(string[])string")
 
+    print(qrem_sel)
+
+    # Txn.application_args[0] is the method selector for the method being executed
+    # compare it to known selectors below and, if match is found, call relevant subroutine
+    selector = Txn.application_args[0]
+
+    # This cond is responsible for handling the routing of methods based on their selectors
+    # In the future this may be handled automatically as part of the PyTEAL contract definition
     router = Cond(
         [
-            Txn.application_args[0] == add_sel,
-            wrap_return_int(
-                add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))
+            selector == add_sel,
+            wrap_return(
+                Itob(add(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2])))
             ),
         ],
         [
-            Txn.application_args[0] == sub_sel,
-            wrap_return_int(
-                sub(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))
+            selector == sub_sel,
+            wrap_return(
+                Itob(sub(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2])))
             ),
         ],
         [
-            Txn.application_args[0] == mul_sel,
-            wrap_return_int(
-                mul(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))
+            selector == mul_sel,
+            wrap_return(
+                Itob(mul(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2])))
             ),
         ],
         [
-            Txn.application_args[0] == div_sel,
-            wrap_return_int(
-                div(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))
+            selector == div_sel,
+            wrap_return(
+                Itob(div(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2])))
             ),
         ],
         [
-            Txn.application_args[0] == qrem_sel,
-            wrap_return_bytes(
+            selector == qrem_sel,
+            wrap_return(
                 qrem(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))
             ),
         ],
         [
-            Txn.application_args[0] == reverse_sel,
-            wrap_return_bytes(reverse(Txn.application_args[1])),
+            selector == reverse_sel,
+            wrap_return(reverse(Txn.application_args[1])),
         ],
         [
-            Txn.application_args[0] == txn_sel,
-            wrap_return_int(
-                txntest(Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2]))
+            selector == txn_sel,
+            wrap_return(
+                Itob(
+                    txntest(
+                        Btoi(Txn.application_args[1]), Btoi(Txn.application_args[2])
+                    )
+                )
             ),
         ],
         [
-            Txn.application_args[0] == many_sel,
-            wrap_return_int(
+            selector == many_sel,
+            wrap_return(
+                Itob(
                 manyargs(
                     Btoi(Txn.application_args[1]),
                     Btoi(Txn.application_args[2]),
@@ -255,23 +271,24 @@ def approval():
                     ExtractUint64(Txn.application_args[15], Int(32)),
                     ExtractUint64(Txn.application_args[15], Int(40)),
                 )
+                )
             ),
         ],
         [
-            Txn.application_args[0] == min_sel,
-            wrap_return_int(min_bal(Btoi(Txn.application_args[1]))),
+            selector == min_sel,
+            wrap_return(Itob(min_bal(Btoi(Txn.application_args[1])))),
         ],
         [
-            Txn.application_args[0] == optin_sel,
-            wrap_return_int(_optIn(Btoi(Txn.application_args[1]))),
+            selector == optin_sel,
+            wrap_return(Itob(_optIn(Btoi(Txn.application_args[1])))),
         ],
         [
-            Txn.application_args[0] == close_sel,
-            wrap_return_int(_closeOut(Btoi(Txn.application_args[1]))),
+            selector == close_sel,
+            wrap_return(Itob(_closeOut(Btoi(Txn.application_args[1])))),
         ],
         [
-            Txn.application_args[0] == concat_sel,
-            wrap_return_bytes(concat_strings(Txn.application_args[1])),
+            selector == concat_sel,
+            wrap_return(concat_strings(Txn.application_args[1])),
         ],
     )
 
