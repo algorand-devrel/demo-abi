@@ -62,51 +62,54 @@ func main() {
 
 	signer := future.BasicAccountTransactionSigner{Account: acct}
 
+	mcp := future.AddMethodCallParams{
+		AppID:           contract.AppId,
+		Sender:          acct.Address,
+		SuggestedParams: sp,
+		OnComplete:      types.NoOpOC,
+	}
+
+	// Skipping error checks below during AddMethodCall and txn create
 	atc := future.MakeAtomicTransactionComposer()
-	_ = atc.AddMethodCall(future.AddMethodCallParams{
-		AppID:           contract.AppId,
-		Method:          getMethod(contract, "add"),
-		MethodArgs:      []interface{}{1, 1},
-		Sender:          acct.Address,
-		SuggestedParams: sp,
-		OnComplete:      types.NoOpOC,
-	}, signer)
 
-	_ = atc.AddMethodCall(future.AddMethodCallParams{
-		AppID:           contract.AppId,
-		Method:          getMethod(contract, "sub"),
-		MethodArgs:      []interface{}{3, 1},
-		Sender:          acct.Address,
-		SuggestedParams: sp,
-		OnComplete:      types.NoOpOC,
-	}, signer)
+	// Uint32 args/return
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "add"), []interface{}{1, 1}), signer)
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "sub"), []interface{}{3, 1}), signer)
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "mul"), []interface{}{3, 2}), signer)
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "div"), []interface{}{4, 2}), signer)
 
-	_ = atc.AddMethodCall(future.AddMethodCallParams{
-		AppID:           contract.AppId,
-		Method:          getMethod(contract, "mul"),
-		MethodArgs:      []interface{}{3, 2},
-		Sender:          acct.Address,
-		SuggestedParams: sp,
-		OnComplete:      types.NoOpOC,
-	}, signer)
+	// Uint64 args, (Uint64,Uint64) return
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "qrem"), []interface{}{27, 5}), signer)
 
-	_ = atc.AddMethodCall(future.AddMethodCallParams{
-		AppID:           contract.AppId,
-		Method:          getMethod(contract, "div"),
-		MethodArgs:      []interface{}{4, 2},
-		Sender:          acct.Address,
-		SuggestedParams: sp,
-		OnComplete:      types.NoOpOC,
-	}, signer)
+	// String arg/return
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "reverse"),
+		[]interface{}{"desrever yllufsseccus"}), signer)
 
-	_ = atc.AddMethodCall(future.AddMethodCallParams{
-		AppID:           contract.AppId,
-		Method:          getMethod(contract, "qrem"),
-		MethodArgs:      []interface{}{27, 5},
-		Sender:          acct.Address,
-		SuggestedParams: sp,
-		OnComplete:      types.NoOpOC,
-	}, signer)
+	// []string arg, string return
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "concat_strings"),
+		[]interface{}{[]string{"this", "string", "is", "joined"}}), signer)
+
+	// Txn arg, uint return
+	txn, _ := future.MakePaymentTxn(acct.Address.String(), acct.Address.String(), 10000, nil, "", sp)
+	stxn := future.TransactionWithSigner{
+		Txn:    txn,
+		Signer: signer,
+	}
+	atc.AddMethodCall(combine(mcp, getMethod(contract, "txntest"),
+		[]interface{}{10000, stxn, 1000}), signer)
+
+	// >14 args, so they get tuple encoded automatically
+	err = atc.AddMethodCall(combine(mcp, getMethod(contract, "manyargs"),
+		[]interface{}{
+			1, 1, 1, 1, 1,
+			1, 1, 1, 1, 1,
+			1, 1, 1, 1, 1,
+			1, 1, 1, 1, 1,
+		}), signer)
+
+	if err != nil {
+		log.Fatalf("Failed to add method call: %+v", err)
+	}
 
 	_, _, ret, err := atc.Execute(client, context.Background(), 2)
 	if err != nil {
@@ -126,4 +129,10 @@ func getMethod(c *future.Contract, name string) (m future.Method) {
 	}
 	log.Fatalf("No method named: %s", name)
 	return
+}
+
+func combine(mcp future.AddMethodCallParams, m future.Method, a []interface{}) future.AddMethodCallParams {
+	mcp.Method = m
+	mcp.MethodArgs = a
+	return mcp
 }
