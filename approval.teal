@@ -1,5 +1,5 @@
 #pragma version 5
-intcblock 1 0 2 8
+intcblock 1 0 2 8 16 24 32 40
 bytecblock 0xfe6bdf69 0x78b488b7 0xe2f188c5 0x16e80f08 0xf20b6567 0xe54892f0 0x5084cec4 0x0316346f 0xe0f6a6c7 0x9b122fc1 0x80630032 0xfbd77ae8 0x
 txn ApplicationID
 intc_1 // 0
@@ -138,16 +138,16 @@ txna ApplicationArgs 15
 intc_3 // 8
 extract_uint64
 txna ApplicationArgs 15
-pushint 16 // 16
+intc 4 // 16
 extract_uint64
 txna ApplicationArgs 15
-pushint 24 // 24
+intc 5 // 24
 extract_uint64
 txna ApplicationArgs 15
-pushint 32 // 32
+intc 6 // 32
 extract_uint64
 txna ApplicationArgs 15
-pushint 40 // 40
+intc 7 // 40
 extract_uint64
 callsub sub12
 itob
@@ -378,7 +378,9 @@ store 16
 load 16
 len
 itob
-extract 6 2
+pushint 6 // 6
+intc_2 // 2
+extract3
 load 16
 concat
 retsub
@@ -538,16 +540,16 @@ txna ApplicationArgs 15
 intc_3 // 8
 extract_uint64
 txna ApplicationArgs 15
-pushint 16 // 16
+intc 4 // 16
 extract_uint64
 txna ApplicationArgs 15
-pushint 24 // 24
+intc 5 // 24
 extract_uint64
 txna ApplicationArgs 15
-pushint 32 // 32
+intc 6 // 32
 extract_uint64
 txna ApplicationArgs 15
-pushint 40 // 40
+intc 7 // 40
 extract_uint64
 callsub sub12
 itob

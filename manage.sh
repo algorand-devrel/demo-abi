@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SB="$HOME/sandbox/sandbox"
+SB="$HOME/Work/sandbox/sandbox"
 GOAL="$SB goal"
 
 accts=(`$GOAL account list | awk '{print $3}'`)
