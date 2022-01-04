@@ -1,220 +1,82 @@
 {
-  "name": "demo-abi",
-  "networks": {
-    "fSNEU0vp5qN1aKyVTrS/qDta/Vv7UI/mIiXg8F0E9NU=": {
-      "appID": 22
-    }
-  },
-  "methods": [
-    {
-      "name": "add",
-      "desc": "Add 2 integers",
-      "args": [
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
+    "name":"demo-abi",
+    "networks": {
+        "fSNEU0vp5qN1aKyVTrS/qDta/Vv7UI/mIiXg8F0E9NU=": {
+            "appID": 22
         }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
     },
-    {
-      "name": "sub",
-      "desc": "Subtract 2 integers",
-      "args": [
+    "methods":[
         {
-          "type": "uint64"
+            "name":"add",
+            "desc":"Add 2 integers",
+            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
+            "returns": {"type":"uint64"}
         },
         {
-          "type": "uint64"
+            "name":"sub",
+            "desc":"Subtract 2 integers",
+            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
+            "returns": {"type":"uint64"}
+        },
+        {
+            "name":"mul",
+            "desc":"Multiply 2 integers",
+            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
+            "returns": {"type":"uint64"}
+        },
+        {
+            "name":"div",
+            "desc":"Divide 2 integers, throw away the remainder",
+            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
+            "returns": {"type":"uint64"}
+        },
+        {
+            "name":"qrem",
+            "desc":"Divide 2 integers, return both the quotient and remainder",
+            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
+            "returns": {"type":"(uint64,uint64)"}
+        },
+        {
+            "name":"reverse",
+            "desc":"Reverses a string",
+            "args":[ { "type":"string" } ],
+            "returns": {"type":"string"}
+        },
+        {
+            "name":"txntest",
+            "desc":"just check it",
+            "args":[{"type":"uint64"}, {"type": "pay"}, {"type":"uint64"}],
+            "returns":{"type": "uint64"}
+        },
+        {
+            "name":"concat_strings",
+            "desc":"concat some strings",
+            "args":[{"type":"string[]"}],
+            "returns":{"type": "string"}
+        },
+        {
+            "name":"manyargs",
+            "desc":"Try to send 20 arguments",
+            "args":[
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
+                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"}
+            ],
+            "returns":{"type": "uint64"}
+        },
+        {
+            "name":"_optIn",
+            "desc":"just opt in",
+            "args":[{"type":"uint64"}],
+            "returns":{"type": "uint64"}
+        },
+        {
+            "name":"_closeOut",
+            "desc":"just close out",
+            "args":[{"type":"uint64"}],
+            "returns":{"type": "uint64"}
         }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    },
-    {
-      "name": "mul",
-      "desc": "Multiply 2 integers",
-      "args": [
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    },
-    {
-      "name": "div",
-      "desc": "Divide 2 integers, throw away the remainder",
-      "args": [
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    },
-    {
-      "name": "qrem",
-      "desc": "Divide 2 integers, return both the quotient and remainder",
-      "args": [
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "(uint64,uint64)"
-      }
-    },
-    {
-      "name": "reverse",
-      "desc": "Reverses a string",
-      "args": [
-        {
-          "type": "string"
-        }
-      ],
-      "returns": {
-        "type": "string"
-      }
-    },
-    {
-      "name": "txntest",
-      "desc": "just check it",
-      "args": [
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "pay"
-        },
-        {
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    },
-    {
-      "name": "concat_strings",
-      "desc": "concat some strings",
-      "args": [
-        {
-          "type": "string[]"
-        }
-      ],
-      "returns": {
-        "type": "string"
-      }
-    },
-    {
-      "name": "manyargs",
-      "desc": "Try to send 20 arguments",
-      "args": [
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        },
-        {
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    },
-    {
-      "name": "_optIn",
-      "desc": "just opt in",
-      "args": [
-        {
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    },
-    {
-      "name": "_closeOut",
-      "desc": "just close out",
-      "args": [
-        {
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    }
-  ]
+    ]
 }
