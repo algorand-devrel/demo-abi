@@ -315,13 +315,13 @@ if __name__ == "__main__":
     with open(os.path.join(path, "approval.teal"), "w") as f:
         f.write(
             compileTeal(
-                approval(), mode=Mode.Application, version=6, assembleConstants=True
+                approval(), mode=Mode.Application, version=5, assembleConstants=True
             )
         )
 
     with open(os.path.join(path, "clear.teal"), "w") as f:
         f.write(
             compileTeal(
-                clear(), mode=Mode.Application, version=6, assembleConstants=True
+                clear(), mode=Mode.Application, version=5, assembleConstants=True
             )
         )

@@ -6,6 +6,8 @@ from algosdk.abi import *
 from algosdk.mnemonic import *
 from algosdk.account import *
 
+from sandbox import get_accounts
+
 client = AlgodClient("a" * 64, "http://localhost:4001")
 
 with open("../contract.json") as f:
@@ -13,7 +15,7 @@ with open("../contract.json") as f:
 
 c = Contract.from_json(js)
 
-app_id = 1
+app_id = c.networks["default"].app_id
 
 def get_method(name: str) -> Method:
     for m in c.methods:
@@ -21,10 +23,8 @@ def get_method(name: str) -> Method:
             return m
     raise Exception("No method with the name {}".format(name))
 
-mnemonic = "hobby other dilemma add wool nurse insane cinnamon doctor swarm fan same usage sock mirror clever mention situate reason subject curtain tired flat able hunt"
 
-sk = to_private_key(mnemonic)
-addr = to_public_key(mnemonic)
+addr, sk = get_accounts()[0]
 
 signer = AccountTransactionSigner(sk)
 
@@ -44,17 +44,14 @@ comp.add_method_call(app_id, get_method("txntest"), addr, sp, signer, method_arg
 
 comp.add_method_call(app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
 
-comp.add_method_call(app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
-comp.add_method_call(app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
-
-#comp.add_method_call(
-#    c.app_id,
-#    get_method("min_bal"),
-#    addr,
-#    sp,
-#    signer,
-#    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
-#)
+comp.add_method_call(
+    app_id,
+    get_method("min_bal"),
+    addr,
+    sp,
+    signer,
+    method_args=["SKCBRBKPIGY5LI2OU63IE5LMNQ5BVVOKPHWTPPWFQOI4NG4TI35SLAA3JQ"],
+)
 
 comp.add_method_call(
    app_id,
@@ -66,13 +63,7 @@ comp.add_method_call(
 )
 
 
-txns = comp.build_group()
-
-write_to_file([t.txn for t in txns], "tmp.txns")
-
 resp = comp.execute(client, 2)
-
-print(client.pending_transaction_info(resp.tx_ids[0]))
 
 for result in resp.abi_results:
     print(result.return_value)
