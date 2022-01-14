@@ -1,20 +1,21 @@
 import algosdk, { decodeAddress, Transaction } from 'algosdk'
 import * as fs from 'fs' 
 import {Buffer} from 'buffer'
-
-const mnemonic = "train pause genre sound energy sorry ketchup purse urban lobster until engage ordinary furnace media clown sure goddess genuine pioneer nephew maximum vivid absorb silk"
+import {getAccounts} from './sandbox'
+import { isConstructorDeclaration } from 'typescript';
 
 const algod_token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 const algod_host = "http://127.0.0.1";
-const algod_port = "4002";
+const algod_port = "4001";
 
 (async function(){
 
     // Create a client to communicate with local node
     const client = new algosdk.Algodv2(algod_token, algod_host, algod_port)
     
-    // Get account from hardcoded mnemonic
-    const acct = algosdk.mnemonicToSecretKey(mnemonic)
+    // Get account from sandbox 
+    const accounts = await getAccounts()
+    const acct = accounts[0]
 
     // Read in the local contract.json file
     const buff = fs.readFileSync("../contract.json")
@@ -34,7 +35,7 @@ const algod_port = "4002";
     // since they happen to be the same
     const sp = await client.getTransactionParams().do()
     const commonParams = {
-        appId:contract.appId,
+        appID:contract.networks["default"].appID,
         sender:acct.addr,
         suggestedParams:sp,
         signer: algosdk.makeBasicAccountTransactionSigner(acct)
@@ -88,7 +89,7 @@ const algod_port = "4002";
         ...commonParams
     })
 
-    //// Here we call with 20 arguments to demonstrate Tuple encoding of any arguments past index 14
+    // Here we call with 20 arguments to demonstrate Tuple encoding of any arguments past index 14
     comp.addMethodCall({
         method: getMethodByName("manyargs"),
         methodArgs:[
@@ -100,14 +101,12 @@ const algod_port = "4002";
         ...commonParams
     })
 
-    // Until foreign assets/apps/accounts are supported via the js-sdk, this method may not
-    // be called, nor will the contract.json file parse correctly if an account is specified
-    // as an argument or return type
-    //comp.addMethodCall({
-    //    method:getMethodByName("min_bal"),
-    //    methodArgs:["FHWVNNZOALOSBKYFKEUIZC56SGPLLAREZFFWLXCPBBVVISXDLPTRFR7EIQ"],
-    //    ...commonParams
-    //})
+    // Pass in an account by address, the atc will take care of mapping this correctly
+    comp.addMethodCall({
+        method:getMethodByName("min_bal"),
+        methodArgs:["FHWVNNZOALOSBKYFKEUIZC56SGPLLAREZFFWLXCPBBVVISXDLPTRFR7EIQ"],
+        ...commonParams
+    })
 
     // Dynamic argument types are supported (undefined length array)
     comp.addMethodCall({

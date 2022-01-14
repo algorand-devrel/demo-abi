@@ -6,13 +6,14 @@ from algosdk.abi import *
 from algosdk.mnemonic import *
 from algosdk.account import *
 
-client = AlgodClient("a" * 64, "http://localhost:4002")
+client = AlgodClient("a" * 64, "http://localhost:4001")
 
 with open("../contract.json") as f:
     js = f.read()
 
 c = Contract.from_json(js)
 
+app_id = 1
 
 def get_method(name: str) -> Method:
     for m in c.methods:
@@ -20,7 +21,7 @@ def get_method(name: str) -> Method:
             return m
     raise Exception("No method with the name {}".format(name))
 
-mnemonic = "train pause genre sound energy sorry ketchup purse urban lobster until engage ordinary furnace media clown sure goddess genuine pioneer nephew maximum vivid absorb silk"
+mnemonic = "hobby other dilemma add wool nurse insane cinnamon doctor swarm fan same usage sock mirror clever mention situate reason subject curtain tired flat able hunt"
 
 sk = to_private_key(mnemonic)
 addr = to_public_key(mnemonic)
@@ -31,20 +32,20 @@ sp = client.suggested_params()
 
 comp = AtomicTransactionComposer()
 
-comp.add_method_call(c.app_id, get_method("add"), addr, sp, signer, method_args=[1,1])
-comp.add_method_call(c.app_id, get_method("sub"), addr, sp, signer, method_args=[3,1])
-comp.add_method_call(c.app_id, get_method("div"), addr, sp, signer, method_args=[4,2])
-comp.add_method_call(c.app_id, get_method("mul"), addr, sp, signer, method_args=[3,2])
-comp.add_method_call(c.app_id, get_method("qrem"), addr, sp, signer, method_args=[27,5])
-comp.add_method_call(c.app_id, get_method("reverse"), addr, sp, signer, method_args=["desrever yllufsseccus"])
+comp.add_method_call(app_id, get_method("add"), addr, sp, signer, method_args=[1,1])
+comp.add_method_call(app_id, get_method("sub"), addr, sp, signer, method_args=[3,1])
+comp.add_method_call(app_id, get_method("div"), addr, sp, signer, method_args=[4,2])
+comp.add_method_call(app_id, get_method("mul"), addr, sp, signer, method_args=[3,2])
+comp.add_method_call(app_id, get_method("qrem"), addr, sp, signer, method_args=[27,5])
+comp.add_method_call(app_id, get_method("reverse"), addr, sp, signer, method_args=["desrever yllufsseccus"])
 
 txn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
-comp.add_method_call(c.app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000])
+comp.add_method_call(app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000])
 
-comp.add_method_call(c.app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
+comp.add_method_call(app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
 
-comp.add_method_call(c.app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
-comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
+comp.add_method_call(app_id, get_method("_closeOut"), addr, sp, signer, method_args=[1])
+comp.add_method_call(app_id, get_method("_optIn"), addr, sp, signer, method_args=[1])
 
 #comp.add_method_call(
 #    c.app_id,
@@ -56,7 +57,7 @@ comp.add_method_call(c.app_id, get_method("_optIn"), addr, sp, signer, method_ar
 #)
 
 comp.add_method_call(
-   c.app_id,
+   app_id,
    get_method("concat_strings"),
    addr,
    sp,

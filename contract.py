@@ -192,8 +192,6 @@ def approval():
     min_sel = hashy("min_bal(account)uint64")
     concat_sel = hashy("concat_strings(string[])string")
 
-    print(qrem_sel)
-
     # Txn.application_args[0] is the method selector for the method being executed
     # compare it to known selectors below and, if match is found, call relevant subroutine
     selector = Txn.application_args[0]
@@ -317,13 +315,13 @@ if __name__ == "__main__":
     with open(os.path.join(path, "approval.teal"), "w") as f:
         f.write(
             compileTeal(
-                approval(), mode=Mode.Application, version=5, assembleConstants=True
+                approval(), mode=Mode.Application, version=6, assembleConstants=True
             )
         )
 
     with open(os.path.join(path, "clear.teal"), "w") as f:
         f.write(
             compileTeal(
-                clear(), mode=Mode.Application, version=5, assembleConstants=True
+                clear(), mode=Mode.Application, version=6, assembleConstants=True
             )
         )

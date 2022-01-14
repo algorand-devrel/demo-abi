@@ -1,4 +1,4 @@
-#pragma version 5
+#pragma version 6
 intcblock 1 0 2 8
 bytecblock 0xfe6bdf69 0x78b488b7 0xe2f188c5 0x16e80f08 0xf20b6567 0xe54892f0 0x5084cec4 0x0316346f 0xe0f6a6c7 0x9b122fc1 0x80630032 0xfbd77ae8 0x
 txn ApplicationID
@@ -78,29 +78,29 @@ bnz main_l20
 err
 main_l20:
 txna ApplicationArgs 1
-callsub sub8
-callsub sub0
+callsub concatstrings_8
+callsub wrapreturn_0
 b main_l37
 main_l21:
 txna ApplicationArgs 1
 btoi
-callsub sub11
+callsub closeOut_11
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l22:
 txna ApplicationArgs 1
 btoi
-callsub sub10
+callsub optIn_10
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l23:
 txna ApplicationArgs 1
 btoi
-callsub sub13
+callsub minbal_13
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l24:
 txna ApplicationArgs 1
@@ -149,9 +149,9 @@ extract_uint64
 txna ApplicationArgs 15
 pushint 40 // 40
 extract_uint64
-callsub sub12
+callsub manyargs_12
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l25:
 txn GroupIndex
@@ -170,62 +170,62 @@ btoi
 ==
 &&
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l26:
 txna ApplicationArgs 1
-callsub sub7
-callsub sub0
+callsub reverse_7
+callsub wrapreturn_0
 b main_l37
 main_l27:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub6
-callsub sub0
+callsub qrem_6
+callsub wrapreturn_0
 b main_l37
 main_l28:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub4
+callsub div_4
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l29:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub3
+callsub mul_3
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l30:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub2
+callsub sub_2
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l31:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub1
+callsub add_1
 itob
-callsub sub0
+callsub wrapreturn_0
 b main_l37
 main_l32:
-callsub sub14
+callsub routeorallow_14
 b main_l37
 main_l33:
-callsub sub14
+callsub routeorallow_14
 b main_l37
 main_l34:
 txn Sender
@@ -241,7 +241,9 @@ main_l36:
 intc_0 // 1
 main_l37:
 return
-sub0: // wrap_return
+
+// wrap_return
+wrapreturn_0:
 store 0
 pushbytes 0x151f7c75 // 0x151f7c75
 load 0
@@ -249,55 +251,69 @@ concat
 log
 intc_0 // 1
 retsub
-sub1: // add
+
+// add
+add_1:
 store 2
 store 1
 load 1
 load 2
 +
 retsub
-sub2: // sub
+
+// sub
+sub_2:
 store 4
 store 3
 load 3
 load 4
 -
 retsub
-sub3: // mul
+
+// mul
+mul_3:
 store 6
 store 5
 load 5
 load 6
 *
 retsub
-sub4: // div
+
+// div
+div_4:
 store 8
 store 7
 load 7
 load 8
 /
 retsub
-sub5: // mod
+
+// mod
+mod_5:
 store 12
 store 11
 load 11
 load 12
 %
 retsub
-sub6: // qrem
+
+// qrem
+qrem_6:
 store 10
 store 9
 load 9
 load 10
-callsub sub4
+callsub div_4
 itob
 load 9
 load 10
-callsub sub5
+callsub mod_5
 itob
 concat
 retsub
-sub7: // reverse
+
+// reverse
+reverse_7:
 store 13
 bytec 12 // ""
 store 15
@@ -307,11 +323,11 @@ extract_uint16
 intc_0 // 1
 +
 store 14
-sub7_l1:
+reverse_7_l1:
 load 14
 intc_2 // 2
 >=
-bz sub7_l3
+bz reverse_7_l3
 load 15
 load 13
 load 14
@@ -323,12 +339,14 @@ load 14
 intc_0 // 1
 -
 store 14
-b sub7_l1
-sub7_l3:
+b reverse_7_l1
+reverse_7_l3:
 load 15
-callsub sub9
+callsub prependlength_9
 retsub
-sub8: // concat_strings
+
+// concat_strings
+concatstrings_8:
 store 17
 bytec 12 // ""
 store 19
@@ -336,13 +354,13 @@ intc_1 // 0
 store 20
 intc_1 // 0
 store 18
-sub8_l1:
+concatstrings_8_l1:
 load 18
 load 17
 intc_1 // 0
 extract_uint16
 <
-bz sub8_l3
+bz concatstrings_8_l3
 load 17
 load 18
 intc_2 // 2
@@ -368,12 +386,14 @@ load 18
 intc_0 // 1
 +
 store 18
-b sub8_l1
-sub8_l3:
+b concatstrings_8_l1
+concatstrings_8_l3:
 load 19
-callsub sub9
+callsub prependlength_9
 retsub
-sub9: // prepend_length
+
+// prepend_length
+prependlength_9:
 store 16
 load 16
 len
@@ -382,15 +402,21 @@ extract 6 2
 load 16
 concat
 retsub
-sub10: // _optIn
+
+// _optIn
+optIn_10:
 store 21
 load 21
 retsub
-sub11: // _closeOut
+
+// _closeOut
+closeOut_11:
 store 22
 load 22
 retsub
-sub12: // manyargs
+
+// manyargs
+manyargs_12:
 store 42
 store 41
 store 40
@@ -413,96 +439,100 @@ store 24
 store 23
 load 23
 retsub
-sub13: // min_bal
+
+// min_bal
+minbal_13:
 store 43
 load 43
 txnas Accounts
 min_balance
 retsub
-sub14: // route_or_allow
+
+// route_or_allow
+routeorallow_14:
 txn NumAppArgs
 intc_1 // 0
 >
-bnz sub14_l2
+bnz routeorallow_14_l2
 intc_0 // 1
-b sub14_l27
-sub14_l2:
+b routeorallow_14_l27
+routeorallow_14_l2:
 txna ApplicationArgs 0
 bytec_0 // 0xfe6bdf69
 ==
-bnz sub14_l26
+bnz routeorallow_14_l26
 txna ApplicationArgs 0
 bytec_1 // 0x78b488b7
 ==
-bnz sub14_l25
+bnz routeorallow_14_l25
 txna ApplicationArgs 0
 bytec_2 // 0xe2f188c5
 ==
-bnz sub14_l24
+bnz routeorallow_14_l24
 txna ApplicationArgs 0
 bytec_3 // 0x16e80f08
 ==
-bnz sub14_l23
+bnz routeorallow_14_l23
 txna ApplicationArgs 0
 bytec 4 // 0xf20b6567
 ==
-bnz sub14_l22
+bnz routeorallow_14_l22
 txna ApplicationArgs 0
 bytec 5 // 0xe54892f0
 ==
-bnz sub14_l21
+bnz routeorallow_14_l21
 txna ApplicationArgs 0
 bytec 6 // 0x5084cec4
 ==
-bnz sub14_l20
+bnz routeorallow_14_l20
 txna ApplicationArgs 0
 bytec 7 // 0x0316346f
 ==
-bnz sub14_l19
+bnz routeorallow_14_l19
 txna ApplicationArgs 0
 bytec 8 // 0xe0f6a6c7
 ==
-bnz sub14_l18
+bnz routeorallow_14_l18
 txna ApplicationArgs 0
 bytec 9 // 0x9b122fc1
 ==
-bnz sub14_l17
+bnz routeorallow_14_l17
 txna ApplicationArgs 0
 bytec 10 // 0x80630032
 ==
-bnz sub14_l16
+bnz routeorallow_14_l16
 txna ApplicationArgs 0
 bytec 11 // 0xfbd77ae8
 ==
-bnz sub14_l15
+bnz routeorallow_14_l15
 err
-sub14_l15:
+routeorallow_14_l15:
 txna ApplicationArgs 1
-callsub sub8
-callsub sub0
-b sub14_l27
-sub14_l16:
-txna ApplicationArgs 1
-btoi
-callsub sub11
-itob
-callsub sub0
-b sub14_l27
-sub14_l17:
+callsub concatstrings_8
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l16:
 txna ApplicationArgs 1
 btoi
-callsub sub10
+callsub closeOut_11
 itob
-callsub sub0
-b sub14_l27
-sub14_l18:
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l17:
 txna ApplicationArgs 1
 btoi
-callsub sub13
+callsub optIn_10
 itob
-callsub sub0
-b sub14_l27
-sub14_l19:
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l18:
+txna ApplicationArgs 1
+btoi
+callsub minbal_13
+itob
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l19:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
@@ -549,11 +579,11 @@ extract_uint64
 txna ApplicationArgs 15
 pushint 40 // 40
 extract_uint64
-callsub sub12
+callsub manyargs_12
 itob
-callsub sub0
-b sub14_l27
-sub14_l20:
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l20:
 txn GroupIndex
 intc_0 // 1
 -
@@ -570,55 +600,55 @@ btoi
 ==
 &&
 itob
-callsub sub0
-b sub14_l27
-sub14_l21:
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l21:
 txna ApplicationArgs 1
-callsub sub7
-callsub sub0
-b sub14_l27
-sub14_l22:
-txna ApplicationArgs 1
-btoi
-txna ApplicationArgs 2
-btoi
-callsub sub6
-callsub sub0
-b sub14_l27
-sub14_l23:
+callsub reverse_7
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l22:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub4
+callsub qrem_6
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l23:
+txna ApplicationArgs 1
+btoi
+txna ApplicationArgs 2
+btoi
+callsub div_4
 itob
-callsub sub0
-b sub14_l27
-sub14_l24:
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l24:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub3
+callsub mul_3
 itob
-callsub sub0
-b sub14_l27
-sub14_l25:
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l25:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub2
+callsub sub_2
 itob
-callsub sub0
-b sub14_l27
-sub14_l26:
+callsub wrapreturn_0
+b routeorallow_14_l27
+routeorallow_14_l26:
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 2
 btoi
-callsub sub1
+callsub add_1
 itob
-callsub sub0
-sub14_l27:
+callsub wrapreturn_0
+routeorallow_14_l27:
 retsub

@@ -1,6 +1,10 @@
 {
     "name":"demo-abi",
-    "appId": 428,
+    "networks":{
+        "default":{ 
+            "appID": 1
+        }
+    },
     "methods":[
         {
             "name":"add",
@@ -63,16 +67,20 @@
             "returns":{"type": "uint64"}
         },
         {
-            "name":"_optIn",
-            "desc":"just opt in",
-            "args":[{"type":"uint64"}],
-            "returns":{"type": "uint64"}
+            "name":"min_bal",
+            "desc":"Get the minimum balance for given account",
+            "args":[
+                {"type":"account"}
+            ],
+            "returns":{"type":"uint64"}
         },
         {
-            "name":"_closeOut",
-            "desc":"just close out",
-            "args":[{"type":"uint64"}],
-            "returns":{"type": "uint64"}
+            "name":"tupler",
+            "desc":"",
+            "args":[
+                {"type":"(string,uint64,string)"}
+            ],
+            "returns":{"type":"uint64"}
         }
     ]
 }

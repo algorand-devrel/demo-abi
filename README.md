@@ -1,9 +1,6 @@
 Algorand AVM ABI
 -----------------
 
-**This is a Work In Progress**
-Some functionality is not yet supported by all the SDKs. Expect errors for now.
-
 Demo of implementation for contract and client code that conforms to the ARC4 spec.
 
 https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0004.md
@@ -17,7 +14,7 @@ contract.py - A PyTEAL contract that generates a set of methods that can be call
 contract.json - A JSON file describing the interface of the contract to be read by SDK clients
 js/ - Directory containing a TypeScript client to read in the contract.json file and call methods
 py/ - Directory containing a Python client to read in the contract.json file and call methods
-
+go/ - Directory containing a Go client to read in the contract.json file and call methods
 
 ## Development
 
@@ -27,7 +24,6 @@ If you're in the sandbox directory run:
 ```
 ./sandbox up dev
 ```
-
 
 First make sure you have the latest [PyTEAL](https://github.com/algorand/pyteal) package installed
 

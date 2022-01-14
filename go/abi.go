@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/algorand/go-algorand-sdk/abi"
 	"github.com/algorand/go-algorand-sdk/client/v2/algod"
 	"github.com/algorand/go-algorand-sdk/crypto"
 	"github.com/algorand/go-algorand-sdk/future"
@@ -18,7 +19,7 @@ import (
 
 var (
 	host  = "http://localhost"
-	port  = "4002"
+	port  = "4001"
 	token = strings.Repeat("a", 64)
 
 	m = "train pause genre sound energy sorry ketchup purse urban lobster until engage ordinary furnace media clown sure goddess genuine pioneer nephew maximum vivid absorb silk"
@@ -50,7 +51,7 @@ func main() {
 		log.Fatalf("Failed to read file: %+v", err)
 	}
 
-	contract := &future.Contract{}
+	contract := &abi.Contract{}
 	if err := json.Unmarshal(b, contract); err != nil {
 		log.Fatalf("Failed to marshal contract: %+v", err)
 	}
@@ -63,65 +64,77 @@ func main() {
 	signer := future.BasicAccountTransactionSigner{Account: acct}
 
 	mcp := future.AddMethodCallParams{
-		AppID:           contract.AppId,
+		AppID:           contract.Networks["mainnet"].AppID,
 		Sender:          acct.Address,
 		SuggestedParams: sp,
 		OnComplete:      types.NoOpOC,
+		Signer:          signer,
 	}
 
 	// Skipping error checks below during AddMethodCall and txn create
-	atc := future.MakeAtomicTransactionComposer()
+	var atc = future.AtomicTransactionComposer{}
 
-	// Uint32 args/return
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "add"), []interface{}{1, 1}), signer)
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "sub"), []interface{}{3, 1}), signer)
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "mul"), []interface{}{3, 2}), signer)
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "div"), []interface{}{4, 2}), signer)
-
-	// Uint64 args, (Uint64,Uint64) return
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "qrem"), []interface{}{27, 5}), signer)
-
-	// String arg/return
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "reverse"),
-		[]interface{}{"desrever yllufsseccus"}), signer)
-
-	// []string arg, string return
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "concat_strings"),
-		[]interface{}{[]string{"this", "string", "is", "joined"}}), signer)
-
-	// Txn arg, uint return
-	txn, _ := future.MakePaymentTxn(acct.Address.String(), acct.Address.String(), 10000, nil, "", sp)
-	stxn := future.TransactionWithSigner{
-		Txn:    txn,
-		Signer: signer,
-	}
-	atc.AddMethodCall(combine(mcp, getMethod(contract, "txntest"),
-		[]interface{}{10000, stxn, 1000}), signer)
-
-	// >14 args, so they get tuple encoded automatically
-	err = atc.AddMethodCall(combine(mcp, getMethod(contract, "manyargs"),
-		[]interface{}{
-			1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1,
-			1, 1, 1, 1, 1,
-		}), signer)
-
+	err = atc.AddMethodCall(combine(mcp, getMethod(contract, "tupler"), []interface{}{[]interface{}{"A", 1, "Z"}}))
 	if err != nil {
-		log.Fatalf("Failed to add method call: %+v", err)
+		log.Fatalf("Failed to add method call:  %+v", err)
 	}
 
-	_, _, ret, err := atc.Execute(client, context.Background(), 2)
+	txns, err := atc.BuildGroup()
 	if err != nil {
-		log.Fatalf("Failed to execute call: %+v", err)
+		log.Fatalf("Failed to build: %+v", err)
 	}
+	log.Printf("%+v", txns[0].Txn.ApplicationFields.ApplicationArgs)
 
-	for _, r := range ret {
-		log.Printf("%s returned %+v", r.TxID, r.ReturnValue)
-	}
+	//// Uint32 args/return
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "add"), []interface{}{1, 1}))
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "sub"), []interface{}{3, 1}))
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "mul"), []interface{}{3, 2}))
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "div"), []interface{}{4, 2}))
+
+	//// Uint64 args, (Uint64,Uint64) return
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "qrem"), []interface{}{27, 5}))
+
+	//// String arg/return
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "reverse"),
+	//	[]interface{}{"desrever yllufsseccus"}))
+
+	//// []string arg, string return
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "concat_strings"),
+	//	[]interface{}{[]string{"this", "string", "is", "joined"}}))
+
+	//// Txn arg, uint return
+	//txn, _ := future.MakePaymentTxn(acct.Address.String(), acct.Address.String(), 10000, nil, "", sp)
+	//stxn := future.TransactionWithSigner{
+	//	Txn:    txn,
+	//	Signer: signer,
+	//}
+	//atc.AddMethodCall(combine(mcp, getMethod(contract, "txntest"),
+	//	[]interface{}{10000, stxn, 1000}))
+
+	//// >14 args, so they get tuple encoded automatically
+	//err = atc.AddMethodCall(combine(mcp, getMethod(contract, "manyargs"),
+	//	[]interface{}{
+	//		1, 1, 1, 1, 1,
+	//		1, 1, 1, 1, 1,
+	//		1, 1, 1, 1, 1,
+	//		1, 1, 1, 1, 1,
+	//	}))
+
+	//if err != nil {
+	//	log.Fatalf("Failed to add method call: %+v", err)
+	//}
+
+	//_, _, ret, err := atc.Execute(client, context.Background(), 2)
+	//if err != nil {
+	//	log.Fatalf("Failed to execute call: %+v", err)
+	//}
+
+	//for _, r := range ret {
+	//	log.Printf("%s returned %+v", r.TxID, r.ReturnValue)
+	//}
 }
 
-func getMethod(c *future.Contract, name string) (m future.Method) {
+func getMethod(c *abi.Contract, name string) (m abi.Method) {
 	for _, m = range c.Methods {
 		if m.Name == name {
 			return
@@ -131,7 +144,7 @@ func getMethod(c *future.Contract, name string) (m future.Method) {
 	return
 }
 
-func combine(mcp future.AddMethodCallParams, m future.Method, a []interface{}) future.AddMethodCallParams {
+func combine(mcp future.AddMethodCallParams, m abi.Method, a []interface{}) future.AddMethodCallParams {
 	mcp.Method = m
 	mcp.MethodArgs = a
 	return mcp
