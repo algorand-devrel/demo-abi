@@ -17,10 +17,8 @@ For now I've checked it out in a local directory and replace it in the go.mod fi
 go get
 ```
 
-TODO: provide methods to pull funded accts 
-Change the hardcoded mnemonic to a funded account in your sandbox (`sandbox goal account export -a $ADDR`)
 
-run `go run abi.go`
+run `go run ./*.go`
 
 
 Happy Hacking :)

@@ -10,11 +10,11 @@ ARC-004 or the Algorand ABI is a specification for encoding and decoding of data
 
 
 ## Contents
-contract.py - A PyTEAL contract that generates a set of methods that can be called as ABI methods
-contract.json - A JSON file describing the interface of the contract to be read by SDK clients
-js/ - Directory containing a TypeScript client to read in the contract.json file and call methods
-py/ - Directory containing a Python client to read in the contract.json file and call methods
-go/ - Directory containing a Go client to read in the contract.json file and call methods
+    contract.py - A PyTEAL contract that generates a set of methods that can be called as ABI methods
+    contract.json - A JSON file describing the interface of the contract to be read by SDK clients
+    js/ - Directory containing a TypeScript client to read in the contract.json file and call methods
+    py/ - Directory containing a Python client to read in the contract.json file and call methods
+    go/ - Directory containing a Go client to read in the contract.json file and call methods
 
 ## Development
 

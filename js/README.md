@@ -12,13 +12,8 @@ Install dependencies for this demo
 npm install
 ```
 
-TODO: provide methods to pull funded accts 
-Change the hardcoded mnemonic to a funded account in your sandbox (`sandbox goal account export -a $ADDR`)
-
 run `npx ts-node abi.ts`
 
 This should print out some logs about what its doing.  
-
-Currently (12/1/21) the JS SDK does not support foreign types in ABI method calls.
 
 Happy Hacking :)
