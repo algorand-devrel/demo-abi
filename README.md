@@ -15,6 +15,7 @@ ARC-004 or the Algorand ABI is a specification for encoding and decoding of data
     js/ - Directory containing a TypeScript client to read in the contract.json file and call methods
     py/ - Directory containing a Python client to read in the contract.json file and call methods
     go/ - Directory containing a Go client to read in the contract.json file and call methods
+    goal/ - Directory containing goal commands to call methods directly from the commandline
 
 ## Development
 
