@@ -2,7 +2,6 @@ import algosdk, { decodeAddress, Transaction } from 'algosdk'
 import * as fs from 'fs' 
 import {Buffer} from 'buffer'
 import {getAccounts} from './sandbox'
-import { isConstructorDeclaration } from 'typescript';
 
 const algod_token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 const algod_host = "http://127.0.0.1";

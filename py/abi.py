@@ -17,6 +17,7 @@ c = Contract.from_json(js)
 
 app_id = c.networks["default"].app_id
 
+
 def get_method(name: str) -> Method:
     for m in c.methods:
         if m.name == name:
@@ -32,17 +33,28 @@ sp = client.suggested_params()
 
 comp = AtomicTransactionComposer()
 
-comp.add_method_call(app_id, get_method("add"), addr, sp, signer, method_args=[1,1])
-comp.add_method_call(app_id, get_method("sub"), addr, sp, signer, method_args=[3,1])
-comp.add_method_call(app_id, get_method("div"), addr, sp, signer, method_args=[4,2])
-comp.add_method_call(app_id, get_method("mul"), addr, sp, signer, method_args=[3,2])
-comp.add_method_call(app_id, get_method("qrem"), addr, sp, signer, method_args=[27,5])
-comp.add_method_call(app_id, get_method("reverse"), addr, sp, signer, method_args=["desrever yllufsseccus"])
+comp.add_method_call(app_id, get_method("add"), addr, sp, signer, method_args=[1, 1])
+comp.add_method_call(app_id, get_method("sub"), addr, sp, signer, method_args=[3, 1])
+comp.add_method_call(app_id, get_method("div"), addr, sp, signer, method_args=[4, 2])
+comp.add_method_call(app_id, get_method("mul"), addr, sp, signer, method_args=[3, 2])
+comp.add_method_call(app_id, get_method("qrem"), addr, sp, signer, method_args=[27, 5])
+comp.add_method_call(
+    app_id,
+    get_method("reverse"),
+    addr,
+    sp,
+    signer,
+    method_args=["desrever yllufsseccus"],
+)
 
 txn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
-comp.add_method_call(app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000])
+comp.add_method_call(
+    app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000]
+)
 
-comp.add_method_call(app_id, get_method("manyargs"), addr, sp, signer, method_args=[2]*20)
+comp.add_method_call(
+    app_id, get_method("manyargs"), addr, sp, signer, method_args=[2] * 20
+)
 
 comp.add_method_call(
     app_id,
@@ -54,16 +66,15 @@ comp.add_method_call(
 )
 
 comp.add_method_call(
-   app_id,
-   get_method("concat_strings"),
-   addr,
-   sp,
-   signer,
-   method_args=[["this", "string", "is", "joined"]]
+    app_id,
+    get_method("concat_strings"),
+    addr,
+    sp,
+    signer,
+    method_args=[["this", "string", "is", "joined"]],
 )
 
 
 resp = comp.execute(client, 2)
-
 for result in resp.abi_results:
     print(result.return_value)

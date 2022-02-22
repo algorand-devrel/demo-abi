@@ -2,7 +2,7 @@
     "name":"demo-abi",
     "networks":{
         "default":{ 
-            "appID": 1
+            "appID": 1 
         }
     },
     "methods":[
@@ -45,7 +45,7 @@
         {
             "name":"txntest",
             "desc":"just check it",
-            "args":[{"type":"uint64"}, {"type": "pay"}, {"type":"uint64"}],
+            "args":[{"type":"uint64"}, {"type": "pay"},  {"type":"uint64"}],
             "returns":{"type": "uint64"}
         },
         {

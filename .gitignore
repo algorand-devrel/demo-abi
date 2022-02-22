@@ -1,3 +1,5 @@
 node_modules/
 .venv/
 .app_id
+__pycache__/
+.vscode/

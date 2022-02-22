@@ -13,42 +13,42 @@ return_prefix = Bytes("base16", "0x151f7c75")  # Literally hash('return')[:4]
 
 # Utility function to concat the return const and log the return value
 @Subroutine(TealType.uint64)
-def wrap_return(b: TealType.bytes) -> Expr:
+def wrap_return(b) -> Expr:
     return Seq(Log(Concat(return_prefix, b)), Int(1))
 
 
 @Subroutine(TealType.uint64)
-def add(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def add(a, b) -> Expr:
     return a + b
 
 
 @Subroutine(TealType.uint64)
-def sub(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def sub(a, b) -> Expr:
     return a - b
 
 
 @Subroutine(TealType.uint64)
-def mul(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def mul(a, b) -> Expr:
     return a * b
 
 
 @Subroutine(TealType.uint64)
-def div(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def div(a, b) -> Expr:
     return a / b
 
 
 @Subroutine(TealType.uint64)
-def mod(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def mod(a, b) -> Expr:
     return a % b
 
 
 @Subroutine(TealType.bytes)
-def qrem(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def qrem(a, b) -> Expr:
     return Concat(Itob(div(a, b)), Itob(mod(a, b)))
 
 
 @Subroutine(TealType.bytes)
-def reverse(a: TealType.bytes) -> Expr:
+def reverse(a) -> Expr:
     idx = ScratchVar()
     buff = ScratchVar()
 
@@ -66,7 +66,7 @@ def reverse(a: TealType.bytes) -> Expr:
 
 
 @Subroutine(TealType.bytes)
-def concat_strings(b: TealType.bytes) -> Expr:
+def concat_strings(b) -> Expr:
     idx = ScratchVar()
     buff = ScratchVar()
     pos = ScratchVar()
@@ -93,55 +93,23 @@ def concat_strings(b: TealType.bytes) -> Expr:
 
 
 @Subroutine(TealType.bytes)
-def prepend_length(b: TealType.bytes) -> Expr:
+def prepend_length(b) -> Expr:
     return Concat(Extract(Itob(Len(b)), Int(6), Int(2)), b)
 
 
-def txntest(a: TealType.uint64, b: TealType.uint64):
+def txntest(a, b):
     return And(
         Gtxn[Txn.group_index() - Int(1)].amount() == a,
         Gtxn[Txn.group_index() - Int(1)].fee() == b,
     )
 
-
 @Subroutine(TealType.uint64)
-def _optIn(a: TealType.uint64) -> Expr:
+def manyargs(a: Expr, b: Expr, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t):
     return a
 
 
 @Subroutine(TealType.uint64)
-def _closeOut(a: TealType.uint64) -> Expr:
-    return a
-
-
-@Subroutine(TealType.uint64)
-def manyargs(
-    a: TealType.uint64,
-    b: TealType.uint64,
-    c: TealType.uint64,
-    d: TealType.uint64,
-    e: TealType.uint64,
-    f: TealType.uint64,
-    g: TealType.uint64,
-    h: TealType.uint64,
-    i: TealType.uint64,
-    j: TealType.uint64,
-    k: TealType.uint64,
-    l: TealType.uint64,
-    m: TealType.uint64,
-    n: TealType.uint64,
-    o: TealType.uint64,
-    p: TealType.uint64,
-    q: TealType.uint64,
-    r: TealType.uint64,
-    s: TealType.uint64,
-    t: TealType.uint64,
-):
-    return a
-
-
-@Subroutine(TealType.uint64)
-def min_bal(idx: TealType.uint64):
+def min_bal(idx):
     return MinBalance(Txn.accounts[idx])
 
 
@@ -177,16 +145,13 @@ def approval():
 
     # Get a method selector from the python function signature, used later to route to 
     # correct subroutine
-    add_sel = get_method_selector(add)
-    sub_sel = get_method_selector(sub)
-    mul_sel = get_method_selector(mul)
-    div_sel = get_method_selector(div)
-    reverse_sel = get_method_selector(reverse)
-    many_sel = get_method_selector(manyargs)
-    optin_sel = get_method_selector(_optIn)
-    close_sel = get_method_selector(_closeOut)
-
-    # Types that dont work with get_method_selector function, so we cheat
+    add_sel = hashy("add(uint64,uint64)uint64")
+    sub_sel = hashy("sub(uint64,uint64)uint64")
+    mul_sel = hashy("mul(uint64,uint64)uint64")
+    div_sel = hashy("div(uint64,uint64)uint64")
+    reverse_sel = hashy("reverse(string)string")
+    many_sel = hashy("manyargs(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64")
+    print(many_sel)
     qrem_sel = hashy("qrem(uint64,uint64)(uint64,uint64)")
     txn_sel = hashy("txntest(uint64,pay,uint64)uint64")
     min_sel = hashy("min_bal(account)uint64")
@@ -275,14 +240,6 @@ def approval():
         [
             selector == min_sel,
             wrap_return(Itob(min_bal(Btoi(Txn.application_args[1])))),
-        ],
-        [
-            selector == optin_sel,
-            wrap_return(Itob(_optIn(Btoi(Txn.application_args[1])))),
-        ],
-        [
-            selector == close_sel,
-            wrap_return(Itob(_closeOut(Btoi(Txn.application_args[1])))),
         ],
         [
             selector == concat_sel,

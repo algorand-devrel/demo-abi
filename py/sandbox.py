@@ -6,6 +6,7 @@ KMD_TOKEN = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 KMD_WALLET_NAME = "unencrypted-default-wallet"
 KMD_WALLET_PASSWORD = ""
 
+
 def get_accounts():
     kmd = KMDClient(KMD_TOKEN, KMD_ADDRESS)
     wallets = kmd.list_wallets()
