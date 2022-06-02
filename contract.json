@@ -1,86 +1,209 @@
 {
-    "name":"demo-abi",
-    "networks":{
-        "default":{ 
-            "appID": 1 
+  "name": "demo-abi",
+  "methods": [
+    {
+      "name": "add",
+      "args": [
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
         }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
     },
-    "methods":[
+    {
+      "name": "sub",
+      "args": [
         {
-            "name":"add",
-            "desc":"Add 2 integers",
-            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
-            "returns": {"type":"uint64"}
+          "type": "uint64"
         },
         {
-            "name":"sub",
-            "desc":"Subtract 2 integers",
-            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
-            "returns": {"type":"uint64"}
-        },
-        {
-            "name":"mul",
-            "desc":"Multiply 2 integers",
-            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
-            "returns": {"type":"uint64"}
-        },
-        {
-            "name":"div",
-            "desc":"Divide 2 integers, throw away the remainder",
-            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
-            "returns": {"type":"uint64"}
-        },
-        {
-            "name":"qrem",
-            "desc":"Divide 2 integers, return both the quotient and remainder",
-            "args":[ { "type":"uint64" }, { "type":"uint64" } ],
-            "returns": {"type":"(uint64,uint64)"}
-        },
-        {
-            "name":"reverse",
-            "desc":"Reverses a string",
-            "args":[ { "type":"string" } ],
-            "returns": {"type":"string"}
-        },
-        {
-            "name":"txntest",
-            "desc":"just check it",
-            "args":[{"type":"uint64"}, {"type": "pay"},  {"type":"uint64"}],
-            "returns":{"type": "uint64"}
-        },
-        {
-            "name":"concat_strings",
-            "desc":"concat some strings",
-            "args":[{"type":"string[]"}],
-            "returns":{"type": "string"}
-        },
-        {
-            "name":"manyargs",
-            "desc":"Try to send 20 arguments",
-            "args":[
-                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
-                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
-                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
-                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"},
-                {"type":"uint64"}, {"type": "uint64"}, {"type":"uint64"},{"type":"uint64"}
-            ],
-            "returns":{"type": "uint64"}
-        },
-        {
-            "name":"min_bal",
-            "desc":"Get the minimum balance for given account",
-            "args":[
-                {"type":"account"}
-            ],
-            "returns":{"type":"uint64"}
-        },
-        {
-            "name":"tupler",
-            "desc":"",
-            "args":[
-                {"type":"(string,uint64,string)"}
-            ],
-            "returns":{"type":"uint64"}
+          "type": "uint64"
         }
-    ]
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "mul",
+      "args": [
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "div",
+      "args": [
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "mod",
+      "args": [
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "qrem",
+      "args": [
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "(uint64,uint64)"
+      }
+    },
+    {
+      "name": "reverse",
+      "args": [
+        {
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "concat_strings",
+      "args": [
+        {
+          "type": "string[]"
+        }
+      ],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "manyargs",
+      "args": [
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "min_bal",
+      "args": [
+        {
+          "type": "account"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "txntest",
+      "args": [
+        {
+          "type": "uint64"
+        },
+        {
+          "type": "pay"
+        },
+        {
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    }
+  ],
+  "desc": null,
+  "networks": {}
 }
