@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
+	"strconv"
 	"strings"
 
 	"github.com/algorand/go-algorand-sdk/abi"
@@ -34,19 +34,24 @@ func main() {
 
 	acct := accts[0]
 
-	f, err := os.Open("../contract.json")
+	b, err := ioutil.ReadFile("../contract.json")
 	if err != nil {
 		log.Fatalf("Failed to open contract file: %+v", err)
 	}
-
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		log.Fatalf("Failed to read file: %+v", err)
-	}
-
 	contract := &abi.Contract{}
 	if err := json.Unmarshal(b, contract); err != nil {
 		log.Fatalf("Failed to marshal contract: %+v", err)
+	}
+
+	b, err = ioutil.ReadFile("../.app_id")
+	if err != nil {
+		log.Fatalf("Failed to open app id file: %+v", err)
+	}
+
+	// Parse the app id, removing the newline
+	app_id, err := strconv.ParseUint(string(b[:len(b)-1]), 10, 64)
+	if err != nil {
+		log.Fatalf("Failed to parse int: %+v", err)
 	}
 
 	sp, err := client.SuggestedParams().Do(context.Background())
@@ -57,7 +62,7 @@ func main() {
 	signer := future.BasicAccountTransactionSigner{Account: acct}
 
 	mcp := future.AddMethodCallParams{
-		AppID:           contract.Networks["default"].AppID,
+		AppID:           app_id,
 		Sender:          acct.Address,
 		SuggestedParams: sp,
 		OnComplete:      types.NoOpOC,
