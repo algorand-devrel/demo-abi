@@ -401,41 +401,27 @@ main_l24:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l34
-txn OnCompletion
-int OptIn
-==
-bnz main_l33
-txn OnCompletion
-int CloseOut
-==
-bnz main_l32
+bnz main_l30
 txn OnCompletion
 int UpdateApplication
 ==
-bnz main_l31
+bnz main_l29
 txn OnCompletion
 int DeleteApplication
 ==
-bnz main_l30
+bnz main_l28
 err
+main_l28:
+txn Sender
+global CreatorAddress
+==
+return
+main_l29:
+txn Sender
+global CreatorAddress
+==
+return
 main_l30:
-txn Sender
-global CreatorAddress
-==
-return
-main_l31:
-txn Sender
-global CreatorAddress
-==
-return
-main_l32:
-int 0
-return
-main_l33:
-int 0
-return
-main_l34:
 txn ApplicationID
 int 0
 ==
@@ -633,6 +619,11 @@ txntest_10:
 store 80
 store 79
 store 78
+load 79
+gtxns TypeEnum
+int pay
+==
+assert
 load 79
 gtxns Amount
 load 78

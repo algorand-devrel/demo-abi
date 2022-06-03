@@ -5,5 +5,5 @@ int 0
 bnz main_l2
 err
 main_l2:
-int 0
+int 1
 return

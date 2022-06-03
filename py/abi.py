@@ -48,9 +48,9 @@ comp.add_method_call(
     method_args=["desrever yllufsseccus"],
 )
 
-txn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
+ptxn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
 comp.add_method_call(
-    app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, txn, 1000]
+    app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, ptxn, 1000]
 )
 
 comp.add_method_call(

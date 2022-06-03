@@ -11,13 +11,13 @@ router = Router(
         # Only let creator update/delete
         update_application=OnCompleteAction.always(Return(is_creator)),
         delete_application=OnCompleteAction.always(Return(is_creator)),
-        # No local state, just reject
-        close_out=OnCompleteAction.always(Reject()),
-        opt_in=OnCompleteAction.always(Reject()),
-        clear_state=OnCompleteAction.always(Reject()),
+        # No local state, dont bother handling it 
+        close_out=OnCompleteAction.never(),
+        opt_in=OnCompleteAction.never(),
+        # Just be nice
+        clear_state=OnCompleteAction.always(Approve()),
     ),
 )
-
 
 @router.method
 def add(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
@@ -123,11 +123,12 @@ def min_bal(acct: abi.Account, *, output: abi.Uint64):
 
 
 @router.method
-def txntest(amt: abi.Uint64, txn: abi.PaymentTransaction, fee: abi.Uint64, *, output: abi.Uint64):
+def txntest(amt: abi.Uint64, ptxn: abi.PaymentTransaction, fee: abi.Uint64, *, output: abi.Uint64):
     return Seq(
-        Assert(txn.get().amount() == amt.get()),
-        Assert(txn.get().fee() == fee.get()),
-        output.set(txn.get().amount()),
+        Assert(ptxn.get().type_enum() == TxnType.Payment),
+        Assert(ptxn.get().amount() == amt.get()),
+        Assert(ptxn.get().fee() == fee.get()),
+        output.set(ptxn.get().amount()),
     )
 
 
