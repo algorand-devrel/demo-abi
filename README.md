@@ -8,7 +8,6 @@ https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0004.md
 
 ARC-004 or the Algorand ABI is a specification for encoding and decoding of data types and a standard for handling method calls.
 
-
 ## Contents
     contract.py - A PyTEAL contract that generates a set of methods that can be called as ABI methods
     contract.json - A JSON file describing the interface of the contract to be read by SDK clients
@@ -26,7 +25,9 @@ If you're in the sandbox directory run:
 ./sandbox up dev
 ```
 
-First make sure you have the latest [PyTEAL](https://github.com/algorand/pyteal) package installed
+First make sure you have the correct version of [PyTEAL](https://github.com/algorand/pyteal) package installed.
+
+This currently requires the `feature/abi` branch, you can run `pip install requirements.txt` to pull it down
 
 Next, clone this repository and cd to the root directory.
 
