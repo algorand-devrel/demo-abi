@@ -15,7 +15,8 @@
       ],
       "returns": {
         "type": "uint64"
-      }
+      },
+      "desc": "add sums two uint64s and returns the result"
     },
     {
       "name": "sub",
