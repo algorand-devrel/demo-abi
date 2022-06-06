@@ -22,6 +22,8 @@ const algod_port = "4001";
     // Parse the json file into an object, pass it to create an ABIContract object
     const contract = new algosdk.ABIContract(JSON.parse(buff.toString()))
 
+    const appId = parseInt(fs.readFileSync("../.app_id").toString())
+
     // Utility function to return an ABIMethod by its name
     function getMethodByName(name: string): algosdk.ABIMethod  {
         const m = contract.methods.find((mt: algosdk.ABIMethod)=>{ return mt.name==name })
@@ -34,7 +36,7 @@ const algod_port = "4001";
     // since they happen to be the same
     const sp = await client.getTransactionParams().do()
     const commonParams = {
-        appID:contract.networks["default"].appID,
+        appID:appId,
         sender:acct.addr,
         suggestedParams:sp,
         signer: algosdk.makeBasicAccountTransactionSigner(acct)
@@ -116,15 +118,17 @@ const algod_port = "4001";
     
     // This is not necessary to call but it is helpful for debugging
     // to see what is being sent to the network
-    const g = comp.buildGroup()
-    console.log(g)
-    for(const x in g){
-        console.log(g[x].txn.appArgs)
-    }
+    //for(const gtxn of comp.buildGroup()){ console.log(gtxn.txn.appArgs) }
 
-    const result = await comp.execute(client, 2)
-    for(const idx in result.methodResults){
-        console.log(result.methodResults[idx])
+    // Finally, execute the composed group and print out the results
+    const results = await comp.execute(client, 2)
+    for(const result of results.methodResults){
+        // @ts-ignore
+        const methIdx = comp.txIDs.indexOf(result.txID)
+        // @ts-ignore
+        const meth = comp.methodCalls.get(methIdx)
+        
+        console.log(`${meth.name} => ${result.returnValue}`)
     }
 
 })()
