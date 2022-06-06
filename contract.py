@@ -74,6 +74,12 @@ def reverse(a: abi.String, *, output: abi.String) -> Expr:
 
 @router.method
 def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Expr:
+    """
+    concats strings
+    sometimes does other stuff
+
+    """
+
     idx = ScratchVar()
     buff = ScratchVar()
 
@@ -114,12 +120,13 @@ def manyargs(
     *,
     output: abi.Uint64,
 ) -> Expr:
+    """Lots of args here"""
     return output.set(a.get())
 
 
 @router.method
 def min_bal(acct: abi.Account, *, output: abi.Uint64):
-    return output.set(MinBalance(acct.get()))
+    return output.set(MinBalance(acct.deref()))
 
 
 @router.method
