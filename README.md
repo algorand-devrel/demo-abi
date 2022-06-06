@@ -27,22 +27,21 @@ If you're in the sandbox directory run:
 
 First make sure you have the correct version of [PyTEAL](https://github.com/algorand/pyteal) package installed.
 
-This currently requires the `feature/abi` branch, you can run `pip install requirements.txt` to pull it down
+    This currently requires the `feature/abi` branch, you can run `pip install requirements.txt` to pull it down
 
 Next, clone this repository and cd to the root directory.
 
 Create the application:
-Run `./manage.sh create` 
-    This will create the teal source files in approval.teal and clear.teal, copy them to the sandbox, and call the create app transaction.
-    It will print the newly created app id and cache it in a local file `.app_id` 
-    you may have to modify the path to the sandbox shell script you've installed)
+
+    Run `./manage.sh create` 
+        This will create the teal source files in approval.teal and clear.teal, copy them to the sandbox, and call the create app transaction.
+        It will print the newly created app id and cache it in a local file `.app_id` 
+        you may have to modify the path to the sandbox shell script you've installed)
 
 If you update the PyTEAL source:
-Run `./manage.sh update`
-    This will recreate the teal source files, copy them to the sandbox, and call the update app transaction.
-    It will use the cached app id from `.app_id` 
 
-
-Update the `contract.json` file by swapping in your new app id, then check the Language specific README files to see how to call the methods.
+    Run `./manage.sh update`
+        This will recreate the teal source files, copy them to the sandbox, and call the update app transaction.
+        It will use the cached app id from `.app_id` 
 
 You'll also need to tweak the hostnames/ports for the algod client in their respective directories depending on how your local sandbox is configured.
