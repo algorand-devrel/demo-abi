@@ -32,11 +32,11 @@ method "reverse(string)string"
 ==
 bnz main_l19
 txna ApplicationArgs 0
-method "sum_array(uint64[])uint64"
+method "concat_strings(string[])string"
 ==
 bnz main_l18
 txna ApplicationArgs 0
-method "concat_strings(string[])string"
+method "sum_array(uint64[])uint64"
 ==
 bnz main_l17
 txna ApplicationArgs 0
@@ -220,10 +220,11 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-callsub concatstrings_8
-store 31
+callsub sumarray_8
+store 32
 byte 0x151f7c75
-load 31
+load 32
+itob
 concat
 log
 int 1
@@ -238,11 +239,10 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-callsub sumarray_7
+callsub concatstrings_7
 store 27
 byte 0x151f7c75
 load 27
-itob
 concat
 log
 int 1
@@ -539,106 +539,106 @@ load 25
 concat
 retsub
 
-// sum_array
-sumarray_7:
+// concat_strings
+concatstrings_7:
 store 28
-int 0
+byte ""
 store 30
 int 0
 store 29
-sumarray_7_l1:
+concatstrings_7_l1:
 load 29
 load 28
 int 0
 extract_uint16
 <
-bz sumarray_7_l3
+bz concatstrings_7_l6
 load 28
-int 8
+load 28
+int 2
 load 29
+*
+int 2
++
+extract_uint16
+int 2
++
+load 29
+int 1
++
+load 28
+int 0
+extract_uint16
+==
+bnz concatstrings_7_l5
+load 28
+int 2
+load 29
+*
+int 2
++
+int 2
++
+extract_uint16
+int 2
++
+concatstrings_7_l4:
+substring3
+store 31
+load 30
+load 31
+extract 2 0
+concat
+store 30
+load 29
+int 1
++
+store 29
+b concatstrings_7_l1
+concatstrings_7_l5:
+load 28
+len
+b concatstrings_7_l4
+concatstrings_7_l6:
+load 30
+len
+itob
+extract 6 0
+load 30
+concat
+retsub
+
+// sum_array
+sumarray_8:
+store 33
+int 0
+store 35
+int 0
+store 34
+sumarray_8_l1:
+load 34
+load 33
+int 0
+extract_uint16
+<
+bz sumarray_8_l3
+load 33
+int 8
+load 34
 *
 int 2
 +
 extract_uint64
-load 30
+load 35
 +
-store 30
-load 29
-int 1
-+
-store 29
-b sumarray_7_l1
-sumarray_7_l3:
-load 30
-retsub
-
-// concat_strings
-concatstrings_8:
-store 32
-byte ""
-store 34
-int 0
-store 33
-concatstrings_8_l1:
-load 33
-load 32
-int 0
-extract_uint16
-<
-bz concatstrings_8_l6
-load 32
-load 32
-int 2
-load 33
-*
-int 2
-+
-extract_uint16
-int 2
-+
-load 33
-int 1
-+
-load 32
-int 0
-extract_uint16
-==
-bnz concatstrings_8_l5
-load 32
-int 2
-load 33
-*
-int 2
-+
-int 2
-+
-extract_uint16
-int 2
-+
-concatstrings_8_l4:
-substring3
 store 35
 load 34
-load 35
-extract 2 0
-concat
-store 34
-load 33
 int 1
 +
-store 33
-b concatstrings_8_l1
-concatstrings_8_l5:
-load 32
-len
-b concatstrings_8_l4
-concatstrings_8_l6:
-load 34
-len
-itob
-extract 6 0
-load 34
-concat
+store 34
+b sumarray_8_l1
+sumarray_8_l3:
+load 35
 retsub
 
 // manyargs

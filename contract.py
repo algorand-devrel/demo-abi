@@ -30,7 +30,7 @@ router = Router(
 @router.method
 def add(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
     # The doc string is used in the `descr` field of the resulting Method
-    """add sums two uint64s and returns the result"""
+    """ sum a and b, return the result"""
 
     # a.get() and b.get() return expressions to
     # load the scratch vars underlying the ABI types on the stack
@@ -46,21 +46,25 @@ def add(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
 
 @router.method
 def sub(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
+    """ subtract b from a, return the result"""
     return output.set(a.get() - b.get())
 
 
 @router.method
 def mul(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
+    """ multiply a and b, return the result"""
     return output.set(a.get() * b.get())
 
 
 @router.method
 def div(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
+    """ divide a by b, return the result """
     return output.set(a.get() / b.get())
 
 
 @router.method
 def mod(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
+    """ modulo of a by b, return the result """
     return output.set(a.get() % b.get())
 
 
@@ -68,6 +72,7 @@ def mod(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
 def qrem(
     a: abi.Uint64, b: abi.Uint64, *, output: abi.Tuple2[abi.Uint64, abi.Uint64]
 ) -> Expr:
+    """ divide a by b, and modulo of a by b, return the results as a tuple"""
     return Seq(
         # Use walrus operator to declare a new variable
         # then set its value, since set returns an expression
@@ -82,6 +87,7 @@ def qrem(
 
 @router.method
 def reverse(a: abi.String, *, output: abi.String) -> Expr:
+    """ reverse the string a, return the result """
     idx = ScratchVar()
     buff = ScratchVar()
 
@@ -111,11 +117,7 @@ def reverse(a: abi.String, *, output: abi.String) -> Expr:
 
 @router.method
 def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Expr:
-    """
-    concats strings
-    sometimes does other stuff
-
-    """
+    """ Accept a list of strings, return the result of concating them all """
 
     idx = ScratchVar()
     buff = ScratchVar()
@@ -136,6 +138,7 @@ def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Ex
 
 @router.method
 def sum_array(a: abi.DynamicArray[abi.Uint64], *, output: abi.Uint64)->Expr:
+    """ Accept a list of uint64, return the result of summing them all """
     idx = ScratchVar()
 
     init = idx.store(Int(0))
@@ -180,12 +183,13 @@ def manyargs(
     *,
     output: abi.Uint64,
 ) -> Expr:
-    """Lots of args here"""
+    """Lots of args here, internally they get tuple'd after the 15th arg, but atc and router handles this for us """
     return output.set(a.get())
 
 
 @router.method
 def min_bal(acct: abi.Account, *, output: abi.Uint64):
+    """ Return the minimum balance for the passed account """
     # acct is a `reference` type, using `acct.get()` will return
     # the index of the acct passed, while `acct.deref()` will look up
     # the value in the appropriate Transaction Array
@@ -201,6 +205,7 @@ def txntest(
     *,
     output: abi.Uint64,
 ):
+    """ Useless method that just demonstrates specifying a transaction in the method signature """
     # Transaction types may be specified but aren't part of the application arguments
     # you can get the underlying TxnObject with ptxn.get() and perform all the expected
     # functions on it to get access to the fields
