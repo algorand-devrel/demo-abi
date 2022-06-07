@@ -2,83 +2,56 @@
 txn NumAppArgs
 int 0
 ==
-bnz main_l24
+bnz main_l26
 txna ApplicationArgs 0
 method "add(uint64,uint64)uint64"
 ==
-bnz main_l23
+bnz main_l25
 txna ApplicationArgs 0
 method "sub(uint64,uint64)uint64"
 ==
-bnz main_l22
+bnz main_l24
 txna ApplicationArgs 0
 method "mul(uint64,uint64)uint64"
 ==
-bnz main_l21
+bnz main_l23
 txna ApplicationArgs 0
 method "div(uint64,uint64)uint64"
 ==
-bnz main_l20
+bnz main_l22
 txna ApplicationArgs 0
 method "mod(uint64,uint64)uint64"
 ==
-bnz main_l19
+bnz main_l21
 txna ApplicationArgs 0
 method "qrem(uint64,uint64)(uint64,uint64)"
 ==
-bnz main_l18
+bnz main_l20
 txna ApplicationArgs 0
 method "reverse(string)string"
 ==
-bnz main_l17
+bnz main_l19
+txna ApplicationArgs 0
+method "sum_array(uint64[])uint64"
+==
+bnz main_l18
 txna ApplicationArgs 0
 method "concat_strings(string[])string"
 ==
-bnz main_l16
+bnz main_l17
 txna ApplicationArgs 0
 method "manyargs(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64"
 ==
-bnz main_l15
+bnz main_l16
 txna ApplicationArgs 0
 method "min_bal(account)uint64"
 ==
-bnz main_l14
+bnz main_l15
 txna ApplicationArgs 0
 method "txntest(uint64,pay,uint64)uint64"
 ==
-bnz main_l13
+bnz main_l14
 err
-main_l13:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-txna ApplicationArgs 1
-btoi
-store 74
-txna ApplicationArgs 2
-btoi
-store 76
-txn GroupIndex
-int 1
--
-store 75
-load 74
-load 75
-load 76
-callsub txntest_10
-store 77
-byte 0x151f7c75
-load 77
-itob
-concat
-log
-int 1
-return
 main_l14:
 txn OnCompletion
 int NoOp
@@ -89,12 +62,22 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-int 0
-getbyte
-callsub minbal_9
-store 73
+btoi
+store 78
+txna ApplicationArgs 2
+btoi
+store 80
+txn GroupIndex
+int 1
+-
+store 79
+load 78
+load 79
+load 80
+callsub txntest_11
+store 81
 byte 0x151f7c75
-load 73
+load 81
 itob
 concat
 log
@@ -110,77 +93,94 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-btoi
-store 32
-txna ApplicationArgs 2
-btoi
-store 33
-txna ApplicationArgs 3
-btoi
-store 34
-txna ApplicationArgs 4
-btoi
-store 35
-txna ApplicationArgs 5
+int 0
+getbyte
+callsub minbal_10
+store 77
+byte 0x151f7c75
+load 77
+itob
+concat
+log
+int 1
+return
+main_l16:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+txna ApplicationArgs 1
 btoi
 store 36
-txna ApplicationArgs 6
+txna ApplicationArgs 2
 btoi
 store 37
-txna ApplicationArgs 7
+txna ApplicationArgs 3
 btoi
 store 38
-txna ApplicationArgs 8
+txna ApplicationArgs 4
 btoi
 store 39
-txna ApplicationArgs 9
+txna ApplicationArgs 5
 btoi
 store 40
-txna ApplicationArgs 10
+txna ApplicationArgs 6
 btoi
 store 41
-txna ApplicationArgs 11
+txna ApplicationArgs 7
 btoi
 store 42
-txna ApplicationArgs 12
+txna ApplicationArgs 8
 btoi
 store 43
-txna ApplicationArgs 13
+txna ApplicationArgs 9
 btoi
 store 44
-txna ApplicationArgs 14
+txna ApplicationArgs 10
 btoi
 store 45
+txna ApplicationArgs 11
+btoi
+store 46
+txna ApplicationArgs 12
+btoi
+store 47
+txna ApplicationArgs 13
+btoi
+store 48
+txna ApplicationArgs 14
+btoi
+store 49
 txna ApplicationArgs 15
-store 52
-load 52
+store 56
+load 56
 int 0
 extract_uint64
-store 46
-load 52
+store 50
+load 56
 int 8
 extract_uint64
-store 47
-load 52
+store 51
+load 56
 int 16
 extract_uint64
-store 48
-load 52
+store 52
+load 56
 int 24
 extract_uint64
-store 49
-load 52
+store 53
+load 56
 int 32
 extract_uint64
-store 50
-load 52
+store 54
+load 56
 int 40
 extract_uint64
-store 51
-load 32
-load 33
-load 34
-load 35
+store 55
 load 36
 load 37
 load 38
@@ -197,16 +197,20 @@ load 48
 load 49
 load 50
 load 51
-callsub manyargs_8
-store 53
-byte 0x151f7c75
+load 52
 load 53
+load 54
+load 55
+callsub manyargs_9
+store 57
+byte 0x151f7c75
+load 57
 itob
 concat
 log
 int 1
 return
-main_l16:
+main_l17:
 txn OnCompletion
 int NoOp
 ==
@@ -216,15 +220,34 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-callsub concatstrings_7
-store 27
+callsub concatstrings_8
+store 31
 byte 0x151f7c75
-load 27
+load 31
 concat
 log
 int 1
 return
-main_l17:
+main_l18:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+callsub sumarray_7
+store 27
+byte 0x151f7c75
+load 27
+itob
+concat
+log
+int 1
+return
+main_l19:
 txn OnCompletion
 int NoOp
 ==
@@ -242,7 +265,7 @@ concat
 log
 int 1
 return
-main_l18:
+main_l20:
 txn OnCompletion
 int NoOp
 ==
@@ -267,7 +290,7 @@ concat
 log
 int 1
 return
-main_l19:
+main_l21:
 txn OnCompletion
 int NoOp
 ==
@@ -293,7 +316,7 @@ concat
 log
 int 1
 return
-main_l20:
+main_l22:
 txn OnCompletion
 int NoOp
 ==
@@ -319,7 +342,7 @@ concat
 log
 int 1
 return
-main_l21:
+main_l23:
 txn OnCompletion
 int NoOp
 ==
@@ -345,7 +368,7 @@ concat
 log
 int 1
 return
-main_l22:
+main_l24:
 txn OnCompletion
 int NoOp
 ==
@@ -371,7 +394,7 @@ concat
 log
 int 1
 return
-main_l23:
+main_l25:
 txn OnCompletion
 int NoOp
 ==
@@ -397,31 +420,31 @@ concat
 log
 int 1
 return
-main_l24:
+main_l26:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l30
+bnz main_l32
 txn OnCompletion
 int UpdateApplication
 ==
-bnz main_l29
+bnz main_l31
 txn OnCompletion
 int DeleteApplication
 ==
-bnz main_l28
+bnz main_l30
 err
-main_l28:
-txn Sender
-global CreatorAddress
-==
-return
-main_l29:
-txn Sender
-global CreatorAddress
-==
-return
 main_l30:
+txn Sender
+global CreatorAddress
+==
+return
+main_l31:
+txn Sender
+global CreatorAddress
+==
+return
+main_l32:
 txn ApplicationID
 int 0
 ==
@@ -516,77 +539,114 @@ load 25
 concat
 retsub
 
-// concat_strings
-concatstrings_7:
+// sum_array
+sumarray_7:
 store 28
-byte ""
+int 0
 store 30
 int 0
 store 29
-concatstrings_7_l1:
+sumarray_7_l1:
 load 29
 load 28
 int 0
 extract_uint16
 <
-bz concatstrings_7_l6
+bz sumarray_7_l3
 load 28
-load 28
-int 2
+int 8
 load 29
 *
 int 2
 +
-extract_uint16
-int 2
-+
-load 29
-int 1
-+
-load 28
-int 0
-extract_uint16
-==
-bnz concatstrings_7_l5
-load 28
-int 2
-load 29
-*
-int 2
-+
-int 2
-+
-extract_uint16
-int 2
-+
-concatstrings_7_l4:
-substring3
-store 31
+extract_uint64
 load 30
-load 31
-extract 2 0
-concat
++
 store 30
 load 29
 int 1
 +
 store 29
-b concatstrings_7_l1
-concatstrings_7_l5:
-load 28
-len
-b concatstrings_7_l4
-concatstrings_7_l6:
+b sumarray_7_l1
+sumarray_7_l3:
 load 30
+retsub
+
+// concat_strings
+concatstrings_8:
+store 32
+byte ""
+store 34
+int 0
+store 33
+concatstrings_8_l1:
+load 33
+load 32
+int 0
+extract_uint16
+<
+bz concatstrings_8_l6
+load 32
+load 32
+int 2
+load 33
+*
+int 2
++
+extract_uint16
+int 2
++
+load 33
+int 1
++
+load 32
+int 0
+extract_uint16
+==
+bnz concatstrings_8_l5
+load 32
+int 2
+load 33
+*
+int 2
++
+int 2
++
+extract_uint16
+int 2
++
+concatstrings_8_l4:
+substring3
+store 35
+load 34
+load 35
+extract 2 0
+concat
+store 34
+load 33
+int 1
++
+store 33
+b concatstrings_8_l1
+concatstrings_8_l5:
+load 32
+len
+b concatstrings_8_l4
+concatstrings_8_l6:
+load 34
 len
 itob
 extract 6 0
-load 30
+load 34
 concat
 retsub
 
 // manyargs
-manyargs_8:
+manyargs_9:
+store 76
+store 75
+store 74
+store 73
 store 72
 store 71
 store 70
@@ -602,38 +662,33 @@ store 61
 store 60
 store 59
 store 58
-store 57
-store 56
-store 55
-store 54
 retsub
 
 // min_bal
-minbal_9:
-txnas Accounts
+minbal_10:
 min_balance
 retsub
 
 // txntest
-txntest_10:
-store 80
-store 79
-store 78
-load 79
+txntest_11:
+store 84
+store 83
+store 82
+load 83
 gtxns TypeEnum
 int pay
 ==
 assert
-load 79
+load 83
 gtxns Amount
-load 78
+load 82
 ==
 assert
-load 79
+load 83
 gtxns Fee
-load 80
+load 84
 ==
 assert
-load 79
+load 83
 gtxns Amount
 retsub

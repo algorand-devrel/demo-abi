@@ -111,6 +111,18 @@
       }
     },
     {
+      "name": "sum_array",
+      "args": [
+        {
+          "type": "uint64[]",
+          "name": "a"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
       "name": "concat_strings",
       "args": [
         {

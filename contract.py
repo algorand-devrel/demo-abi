@@ -107,6 +107,8 @@ def reverse(a: abi.String, *, output: abi.String) -> Expr:
     )
 
 
+
+
 @router.method
 def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Expr:
     """
@@ -132,6 +134,26 @@ def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Ex
         output.set(buff.load()),
     )
 
+@router.method
+def sum_array(a: abi.DynamicArray[abi.Uint64], *, output: abi.Uint64)->Expr:
+    idx = ScratchVar()
+
+    init = idx.store(Int(0))
+    cond = idx.load() < a.length()
+    iter = idx.store(idx.load() + Int(1))
+
+    return Seq(
+        (running_sum := ScratchVar()).store(Int(0)),
+        For(init, cond, iter).Do(
+            Seq(
+                # Similar to above, but we're using `set` to initialize curr_value 
+                # with the ComputedValue[Uint64] instead of using the `use` method
+                (curr_val := abi.Uint64()).set(a[idx.load()]),
+                running_sum.store(curr_val.get() + running_sum.load())
+            )
+        ),
+        output.set(running_sum.load())
+    )
 
 @router.method
 def manyargs(
@@ -168,7 +190,7 @@ def min_bal(acct: abi.Account, *, output: abi.Uint64):
     # the index of the acct passed, while `acct.deref()` will look up
     # the value in the appropriate Transaction Array
     # this is the same pattern for Account/Asset/Application types
-    return output.set(MinBalance(acct.deref()))
+    return output.set(MinBalance(acct.get()))
 
 
 @router.method
