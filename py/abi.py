@@ -76,6 +76,10 @@ comp.add_method_call(
     method_args=[["this", "string", "is", "joined"]],
 )
 
+#drr = comp.dryrun(client)
+#for txn in drr.trace.txns:
+#    if txn.app_call_rejected():
+#        print(txn.app_trace())
 resp = comp.execute(client, 2)
 for result in resp.abi_results:
     # Get the index of the transaction in the group

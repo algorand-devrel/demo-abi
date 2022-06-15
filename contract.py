@@ -198,7 +198,6 @@ def min_bal(acct: abi.Account, *, output: abi.Uint64):
     # this is a similar pattern for Account/Asset/Application types
     return Seq(
         mb := acct.params().min_balance(),
-        Assert(mb.hasValue()),
         output.set(mb.value())
     )
 
