@@ -63,21 +63,21 @@ int 0
 assert
 txna ApplicationArgs 1
 btoi
-store 78
+store 80
 txna ApplicationArgs 2
 btoi
-store 80
+store 82
 txn GroupIndex
 int 1
 -
-store 79
-load 78
-load 79
-load 80
-callsub txntest_11
 store 81
-byte 0x151f7c75
+load 80
 load 81
+load 82
+callsub txntest_11
+store 83
+byte 0x151f7c75
+load 83
 itob
 concat
 log
@@ -666,29 +666,34 @@ retsub
 
 // min_bal
 minbal_10:
-min_balance
+acct_params_get AcctMinBalance
+store 79
+store 78
+load 79
+assert
+load 78
 retsub
 
 // txntest
 txntest_11:
+store 86
+store 85
 store 84
-store 83
-store 82
-load 83
+load 85
 gtxns TypeEnum
 int pay
 ==
 assert
-load 83
+load 85
 gtxns Amount
-load 82
-==
-assert
-load 83
-gtxns Fee
 load 84
 ==
 assert
-load 83
+load 85
+gtxns Fee
+load 86
+==
+assert
+load 85
 gtxns Amount
 retsub

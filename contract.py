@@ -20,7 +20,7 @@ router = Router(
         opt_in=OnCompleteAction.never(),
         # Just be nice, we _must_ provide _something_ for clear state becuase it is its own
         # program and the router needs _something_ to build
-        clear_state=OnCompleteAction.always(Approve()),
+        clear_state=OnCompleteAction.call_only(Approve()),
     ),
 )
 
@@ -190,11 +190,17 @@ def manyargs(
 @router.method
 def min_bal(acct: abi.Account, *, output: abi.Uint64):
     """ Return the minimum balance for the passed account """
-    # acct is a `reference` type, using `acct.get()` will return
-    # the index of the acct passed, while `acct.deref()` will look up
-    # the value in the appropriate Transaction Array
-    # this is the same pattern for Account/Asset/Application types
-    return output.set(MinBalance(acct.get()))
+    # acct is a `reference` type and is passed in the `accounts` array of the transaction
+    # this lets us look up information about the account or send to the account from
+    # some inner transaction
+    # using `acct.address()` will return the address of the account and
+    # `acct.params()` returns a parameters object to inspect other fields 
+    # this is a similar pattern for Account/Asset/Application types
+    return Seq(
+        mb := acct.params().min_balance(),
+        Assert(mb.hasValue()),
+        output.set(mb.value())
+    )
 
 
 @router.method
