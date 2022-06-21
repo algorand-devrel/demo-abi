@@ -2,57 +2,61 @@
 txn NumAppArgs
 int 0
 ==
-bnz main_l26
+bnz main_l28
 txna ApplicationArgs 0
 method "add(uint64,uint64)uint64"
 ==
-bnz main_l25
+bnz main_l27
 txna ApplicationArgs 0
 method "sub(uint64,uint64)uint64"
 ==
-bnz main_l24
+bnz main_l26
 txna ApplicationArgs 0
 method "mul(uint64,uint64)uint64"
 ==
-bnz main_l23
+bnz main_l25
 txna ApplicationArgs 0
 method "div(uint64,uint64)uint64"
 ==
-bnz main_l22
+bnz main_l24
 txna ApplicationArgs 0
 method "mod(uint64,uint64)uint64"
 ==
-bnz main_l21
+bnz main_l23
 txna ApplicationArgs 0
 method "qrem(uint64,uint64)(uint64,uint64)"
 ==
-bnz main_l20
+bnz main_l22
 txna ApplicationArgs 0
 method "reverse(string)string"
 ==
-bnz main_l19
+bnz main_l21
 txna ApplicationArgs 0
 method "concat_strings(string[])string"
 ==
-bnz main_l18
+bnz main_l20
 txna ApplicationArgs 0
 method "sum_array(uint64[])uint64"
 ==
-bnz main_l17
+bnz main_l19
 txna ApplicationArgs 0
 method "manyargs(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64"
 ==
-bnz main_l16
+bnz main_l18
 txna ApplicationArgs 0
 method "min_bal(account)uint64"
 ==
-bnz main_l15
+bnz main_l17
+txna ApplicationArgs 0
+method "no_return(uint64)void"
+==
+bnz main_l16
 txna ApplicationArgs 0
 method "txntest(uint64,pay,uint64)uint64"
 ==
-bnz main_l14
+bnz main_l15
 err
-main_l14:
+main_l15:
 txn OnCompletion
 int NoOp
 ==
@@ -74,7 +78,7 @@ store 80
 load 79
 load 80
 load 81
-callsub txntest_11
+callsub txntest_12
 store 82
 byte 0x151f7c75
 load 82
@@ -83,7 +87,21 @@ concat
 log
 int 1
 return
-main_l15:
+main_l16:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+btoi
+callsub noreturn_11
+int 1
+return
+main_l17:
 txn OnCompletion
 int NoOp
 ==
@@ -104,7 +122,7 @@ concat
 log
 int 1
 return
-main_l16:
+main_l18:
 txn OnCompletion
 int NoOp
 ==
@@ -210,7 +228,7 @@ concat
 log
 int 1
 return
-main_l17:
+main_l19:
 txn OnCompletion
 int NoOp
 ==
@@ -229,7 +247,7 @@ concat
 log
 int 1
 return
-main_l18:
+main_l20:
 txn OnCompletion
 int NoOp
 ==
@@ -247,7 +265,7 @@ concat
 log
 int 1
 return
-main_l19:
+main_l21:
 txn OnCompletion
 int NoOp
 ==
@@ -265,7 +283,7 @@ concat
 log
 int 1
 return
-main_l20:
+main_l22:
 txn OnCompletion
 int NoOp
 ==
@@ -290,7 +308,7 @@ concat
 log
 int 1
 return
-main_l21:
+main_l23:
 txn OnCompletion
 int NoOp
 ==
@@ -316,7 +334,7 @@ concat
 log
 int 1
 return
-main_l22:
+main_l24:
 txn OnCompletion
 int NoOp
 ==
@@ -342,7 +360,7 @@ concat
 log
 int 1
 return
-main_l23:
+main_l25:
 txn OnCompletion
 int NoOp
 ==
@@ -368,7 +386,7 @@ concat
 log
 int 1
 return
-main_l24:
+main_l26:
 txn OnCompletion
 int NoOp
 ==
@@ -394,7 +412,7 @@ concat
 log
 int 1
 return
-main_l25:
+main_l27:
 txn OnCompletion
 int NoOp
 ==
@@ -420,31 +438,31 @@ concat
 log
 int 1
 return
-main_l26:
+main_l28:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l32
+bnz main_l34
 txn OnCompletion
 int UpdateApplication
 ==
-bnz main_l31
+bnz main_l33
 txn OnCompletion
 int DeleteApplication
 ==
-bnz main_l30
+bnz main_l32
 err
-main_l30:
-txn Sender
-global CreatorAddress
-==
-return
-main_l31:
-txn Sender
-global CreatorAddress
-==
-return
 main_l32:
+txn Sender
+global CreatorAddress
+==
+return
+main_l33:
+txn Sender
+global CreatorAddress
+==
+return
+main_l34:
 txn ApplicationID
 int 0
 ==
@@ -670,8 +688,15 @@ acct_params_get AcctMinBalance
 store 78
 retsub
 
+// no_return
+noreturn_11:
+store 86
+int 1
+assert
+retsub
+
 // txntest
-txntest_11:
+txntest_12:
 store 85
 store 84
 store 83

@@ -245,6 +245,19 @@
       "desc": "Return the minimum balance for the passed account"
     },
     {
+      "name": "no_return",
+      "args": [
+        {
+          "type": "uint64",
+          "name": "a"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "desc": "Just a demonstration of no return value or `void` Omit the `*, output: abi...` from the method signature and void will be used as the return value"
+    },
+    {
       "name": "txntest",
       "args": [
         {

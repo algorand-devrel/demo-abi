@@ -25,6 +25,7 @@ const algod_port = "4001";
     const appId = parseInt(fs.readFileSync("../.app_id").toString())
 
     // Utility function to return an ABIMethod by its name
+    // Will be replaced by https://github.com/algorand/js-algorand-sdk/pull/583
     function getMethodByName(name: string): algosdk.ABIMethod  {
         const m = contract.methods.find((mt: algosdk.ABIMethod)=>{ return mt.name==name })
         if(m === undefined)

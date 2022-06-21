@@ -1,3 +1,4 @@
+from inspect import currentframe
 from pyteal import *
 
 
@@ -12,12 +13,12 @@ router = Router(
     BareCallActions(
         # On create only, just approve
         no_op=OnCompleteAction.create_only(Approve()),
-        # Always let creator update/delete
+        # Always let creator update/delete but only by the creator of this contract
         update_application=OnCompleteAction.always(Return(is_creator)),
         delete_application=OnCompleteAction.always(Return(is_creator)),
         # No local state, dont bother handling it
-        close_out=OnCompleteAction.never(),
-        opt_in=OnCompleteAction.never(),
+        #close_out=OnCompleteAction.never(),
+        #opt_in=OnCompleteAction.never(),
         # Just be nice, we _must_ provide _something_ for clear state becuase it is its own
         # program and the router needs _something_ to build
         clear_state=OnCompleteAction.call_only(Approve()),
@@ -203,6 +204,15 @@ def min_bal(acct: abi.Account, *, output: abi.Uint64):
 
 
 @router.method
+def no_return(a: abi.Uint64):
+    """ 
+        Just a demonstration of no return value or `void` 
+        Omit the `*, output: abi...` from the method signature
+        and void will be used as the return value
+    """
+    return Assert(Int(1))
+
+@router.method
 def txntest(
     amt: abi.Uint64,
     ptxn: abi.PaymentTransaction,
@@ -214,6 +224,7 @@ def txntest(
     # Transaction types may be specified but aren't part of the application arguments
     # you can get the underlying TxnObject with ptxn.get() and perform all the expected
     # functions on it to get access to the fields
+
     return Seq(
         Assert(ptxn.get().type_enum() == TxnType.Payment),
         Assert(ptxn.get().amount() == amt.get()),
