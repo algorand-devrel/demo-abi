@@ -76,14 +76,11 @@ comp.add_method_call(
     method_args=[["this", "string", "is", "joined"]],
 )
 
-#drr = comp.dryrun(client)
-#for txn in drr.trace.txns:
+# drr = comp.dryrun(client)
+# for txn in drr.trace.txns:
 #    if txn.app_call_rejected():
 #        print(txn.app_trace())
+
 resp = comp.execute(client, 2)
 for result in resp.abi_results:
-    # Get the index of the transaction in the group
-    # this index used as the key to the method_dict
-    meth_idx = comp.tx_ids.index(result.tx_id)
-    meth = comp.method_dict[meth_idx]
-    print(f"{meth.name} => {result.return_value}")
+    print(f"{result.method.name} => {result.return_value}")

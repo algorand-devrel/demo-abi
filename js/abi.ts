@@ -121,15 +121,14 @@ const algod_port = "4001";
     // to see what is being sent to the network
     //for(const gtxn of comp.buildGroup()){ console.log(gtxn.txn.appArgs) }
 
+    // We can also dryrun the group
+    // const res = await comp.dryrun(client)
+    // for(const tx of res.methodResults){ console.log(tx.returnValue) }
+
     // Finally, execute the composed group and print out the results
     const results = await comp.execute(client, 2)
     for(const result of results.methodResults){
-        // @ts-ignore
-        const methIdx = comp.txIDs.indexOf(result.txID)
-        // @ts-ignore
-        const meth = comp.methodCalls.get(methIdx)
-        
-        console.log(`${meth.name} => ${result.returnValue}`)
+        console.log(`${result.method.name} => ${result.returnValue}`)
     }
 
 })()

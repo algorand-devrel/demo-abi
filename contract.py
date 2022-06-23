@@ -1,4 +1,3 @@
-from inspect import currentframe
 from pyteal import *
 
 
@@ -17,11 +16,12 @@ router = Router(
         update_application=OnCompleteAction.always(Return(is_creator)),
         delete_application=OnCompleteAction.always(Return(is_creator)),
         # No local state, dont bother handling it
-        #close_out=OnCompleteAction.never(),
-        #opt_in=OnCompleteAction.never(),
+        # close_out=OnCompleteAction.never(),
+        # opt_in=OnCompleteAction.never(),
         # Just be nice, we _must_ provide _something_ for clear state becuase it is its own
         # program and the router needs _something_ to build
-        clear_state=OnCompleteAction.call_only(Approve()),
+        # clear_state=OnCompleteAction.call_only(Approve()),
+        clear_state=OnCompleteAction.never(),
     ),
 )
 
@@ -31,7 +31,7 @@ router = Router(
 @router.method
 def add(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
     # The doc string is used in the `descr` field of the resulting Method
-    """ sum a and b, return the result"""
+    """sum a and b, return the result"""
 
     # a.get() and b.get() return expressions to
     # load the scratch vars underlying the ABI types on the stack
@@ -47,25 +47,25 @@ def add(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
 
 @router.method
 def sub(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
-    """ subtract b from a, return the result"""
+    """subtract b from a, return the result"""
     return output.set(a.get() - b.get())
 
 
 @router.method
 def mul(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
-    """ multiply a and b, return the result"""
+    """multiply a and b, return the result"""
     return output.set(a.get() * b.get())
 
 
 @router.method
 def div(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
-    """ divide a by b, return the result """
+    """divide a by b, return the result"""
     return output.set(a.get() / b.get())
 
 
 @router.method
 def mod(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
-    """ modulo of a by b, return the result """
+    """modulo of a by b, return the result"""
     return output.set(a.get() % b.get())
 
 
@@ -73,7 +73,7 @@ def mod(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
 def qrem(
     a: abi.Uint64, b: abi.Uint64, *, output: abi.Tuple2[abi.Uint64, abi.Uint64]
 ) -> Expr:
-    """ divide a by b, and modulo of a by b, return the results as a tuple"""
+    """divide a by b, and modulo of a by b, return the results as a tuple"""
     return Seq(
         # Use walrus operator to declare a new variable
         # then set its value, since set returns an expression
@@ -88,7 +88,7 @@ def qrem(
 
 @router.method
 def reverse(a: abi.String, *, output: abi.String) -> Expr:
-    """ reverse the string a, return the result """
+    """reverse the string a, return the result"""
     idx = ScratchVar()
     buff = ScratchVar()
 
@@ -114,11 +114,9 @@ def reverse(a: abi.String, *, output: abi.String) -> Expr:
     )
 
 
-
-
 @router.method
 def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Expr:
-    """ Accept a list of strings, return the result of concating them all """
+    """Accept a list of strings, return the result of concating them all"""
 
     idx = ScratchVar()
     buff = ScratchVar()
@@ -137,9 +135,10 @@ def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Ex
         output.set(buff.load()),
     )
 
+
 @router.method
-def sum_array(a: abi.DynamicArray[abi.Uint64], *, output: abi.Uint64)->Expr:
-    """ Accept a list of uint64, return the result of summing them all """
+def sum_array(a: abi.DynamicArray[abi.Uint64], *, output: abi.Uint64) -> Expr:
+    """Accept a list of uint64, return the result of summing them all"""
     idx = ScratchVar()
 
     init = idx.store(Int(0))
@@ -150,14 +149,15 @@ def sum_array(a: abi.DynamicArray[abi.Uint64], *, output: abi.Uint64)->Expr:
         (running_sum := ScratchVar()).store(Int(0)),
         For(init, cond, iter).Do(
             Seq(
-                # Similar to above, but we're using `set` to initialize curr_value 
+                # Similar to above, but we're using `set` to initialize curr_value
                 # with the ComputedValue[Uint64] instead of using the `use` method
                 (curr_val := abi.Uint64()).set(a[idx.load()]),
-                running_sum.store(curr_val.get() + running_sum.load())
+                running_sum.store(curr_val.get() + running_sum.load()),
             )
         ),
-        output.set(running_sum.load())
+        output.set(running_sum.load()),
     )
+
 
 @router.method
 def manyargs(
@@ -184,33 +184,31 @@ def manyargs(
     *,
     output: abi.Uint64,
 ) -> Expr:
-    """Lots of args here, internally they get tuple'd after the 15th arg, but atc and router handles this for us """
+    """Lots of args here, internally they get tuple'd after the 15th arg, but atc and router handles this for us"""
     return output.set(a.get())
 
 
 @router.method
 def min_bal(acct: abi.Account, *, output: abi.Uint64):
-    """ Return the minimum balance for the passed account """
+    """Return the minimum balance for the passed account"""
     # acct is a `reference` type and is passed in the `accounts` array of the transaction
     # this lets us look up information about the account or send to the account from
     # some inner transaction
     # using `acct.address()` will return the address of the account and
-    # `acct.params()` returns a parameters object to inspect other fields 
+    # `acct.params()` returns a parameters object to inspect other fields
     # this is a similar pattern for Account/Asset/Application types
-    return Seq(
-        mb := acct.params().min_balance(),
-        output.set(mb.value())
-    )
+    return Seq(mb := acct.params().min_balance(), output.set(mb.value()))
 
 
 @router.method
 def no_return(a: abi.Uint64):
-    """ 
-        Just a demonstration of no return value or `void` 
-        Omit the `*, output: abi...` from the method signature
-        and void will be used as the return value
+    """
+    Just a demonstration of no return value or `void`
+    Omit the `*, output: abi...` from the method signature
+    and void will be used as the return value
     """
     return Assert(Int(1))
+
 
 @router.method
 def txntest(
@@ -220,7 +218,7 @@ def txntest(
     *,
     output: abi.Uint64,
 ):
-    """ Useless method that just demonstrates specifying a transaction in the method signature """
+    """Useless method that just demonstrates specifying a transaction in the method signature"""
     # Transaction types may be specified but aren't part of the application arguments
     # you can get the underlying TxnObject with ptxn.get() and perform all the expected
     # functions on it to get access to the fields
@@ -232,12 +230,12 @@ def txntest(
         output.set(ptxn.get().amount()),
     )
 
-
 if __name__ == "__main__":
     import os
     import json
 
     path = os.path.dirname(os.path.abspath(__file__))
+
 
     # we use compile program here to get the resulting teal code and Contract definition
     # similarly we could use build_program to return the AST for approval/clear and compile it
@@ -256,3 +254,4 @@ if __name__ == "__main__":
 
     with open(os.path.join(path, "clear.teal"), "w") as f:
         f.write(clear)
+

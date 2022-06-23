@@ -111,18 +111,16 @@ func main() {
 	}
 
 	for _, r := range ret.MethodResults {
-		log.Printf("%s returned %+v", r.TxID, r.ReturnValue)
+		log.Printf("%s returned %+v", r.Method.Name, r.ReturnValue)
 	}
 }
 
-func getMethod(c *abi.Contract, name string) (m abi.Method) {
-	for _, m = range c.Methods {
-		if m.Name == name {
-			return
-		}
+func getMethod(c *abi.Contract, name string) abi.Method {
+	m, err := c.GetMethodByName(name)
+	if err != nil {
+		log.Fatalf("No method named: %s", name)
 	}
-	log.Fatalf("No method named: %s", name)
-	return
+	return m
 }
 
 func combine(mcp future.AddMethodCallParams, m abi.Method, a []interface{}) future.AddMethodCallParams {
