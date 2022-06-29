@@ -18,30 +18,31 @@ with open("../.app_id") as f:
 
 c = Contract.from_json(js)
 
-
-def get_method(name: str) -> Method:
-    for m in c.methods:
-        if m.name == name:
-            return m
-    raise Exception("No method with the name {}".format(name))
-
-
 addr, sk = get_accounts()[0]
 signer = AccountTransactionSigner(sk)
-
 
 comp = AtomicTransactionComposer()
 
 sp = client.suggested_params()
-comp.add_method_call(app_id, get_method("add"), addr, sp, signer, method_args=[1, 1])
-comp.add_method_call(app_id, get_method("sub"), addr, sp, signer, method_args=[3, 1])
-comp.add_method_call(app_id, get_method("div"), addr, sp, signer, method_args=[4, 2])
-comp.add_method_call(app_id, get_method("mul"), addr, sp, signer, method_args=[3, 2])
-comp.add_method_call(app_id, get_method("qrem"), addr, sp, signer, method_args=[27, 5])
+comp.add_method_call(
+    app_id, c.get_method_by_name("add"), addr, sp, signer, method_args=[1, 1]
+)
+comp.add_method_call(
+    app_id, c.get_method_by_name("sub"), addr, sp, signer, method_args=[3, 1]
+)
+comp.add_method_call(
+    app_id, c.get_method_by_name("div"), addr, sp, signer, method_args=[4, 2]
+)
+comp.add_method_call(
+    app_id, c.get_method_by_name("mul"), addr, sp, signer, method_args=[3, 2]
+)
+comp.add_method_call(
+    app_id, c.get_method_by_name("qrem"), addr, sp, signer, method_args=[27, 5]
+)
 
 comp.add_method_call(
     app_id,
-    get_method("reverse"),
+    c.get_method_by_name("reverse"),
     addr,
     sp,
     signer,
@@ -50,17 +51,22 @@ comp.add_method_call(
 
 ptxn = TransactionWithSigner(PaymentTxn(addr, sp, addr, 10000), signer)
 comp.add_method_call(
-    app_id, get_method("txntest"), addr, sp, signer, method_args=[10000, ptxn, 1000]
+    app_id,
+    c.get_method_by_name("txntest"),
+    addr,
+    sp,
+    signer,
+    method_args=[10000, ptxn, 1000],
 )
 
 comp.add_method_call(
-    app_id, get_method("manyargs"), addr, sp, signer, method_args=[2] * 20
+    app_id, c.get_method_by_name("manyargs"), addr, sp, signer, method_args=[2] * 20
 )
 
 
 comp.add_method_call(
     app_id,
-    get_method("min_bal"),
+    c.get_method_by_name("min_bal"),
     addr,
     sp,
     signer,
@@ -69,7 +75,7 @@ comp.add_method_call(
 
 comp.add_method_call(
     app_id,
-    get_method("concat_strings"),
+    c.get_method_by_name("concat_strings"),
     addr,
     sp,
     signer,
