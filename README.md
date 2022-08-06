@@ -1,14 +1,13 @@
-Algorand AVM ABI
------------------
+## Algorand AVM ABI
 
 Demo of implementation for contract and client code that conforms to the ARC4 spec.
 
 https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0004.md
 
-
 ARC-004 or the Algorand ABI is a specification for encoding and decoding of data types and a standard for handling method calls.
 
 ## Contents
+
     contract.py - A PyTEAL contract that generates a set of methods that can be called as ABI methods
     contract.json - A JSON file describing the interface of the contract to be read by SDK clients
     js/ - Directory containing a TypeScript client to read in the contract.json file and call methods
@@ -23,6 +22,7 @@ ARC-004 or the Algorand ABI is a specification for encoding and decoding of data
 Install the [sandbox](https://github.com/algorand/sandbox) to start a local private node and start it with the `dev` configuration.
 
 If you're in the sandbox directory run:
+
 ```
 ./sandbox up dev
 ```
@@ -31,9 +31,7 @@ If you're in the sandbox directory run:
 
 First make sure you have the correct version of [PyTEAL](https://github.com/algorand/pyteal) package installed.
 
-This currently requires the `feature/abi` branch, you can run `pip install requirements.txt` to pull it down
-
-
+This currently requires the `feature/abi` branch, you can run `pip install -r requirements.txt` to pull it down
 
 ### Clone repository
 
@@ -44,7 +42,7 @@ Next, clone this repository and cd to the root directory.
      ./manage.sh create
 
 This will create the teal source files in approval.teal and clear.teal, copy them to the sandbox, and call the create app transaction.
-It will print the newly created app id and cache it in a local file `.app_id` 
+It will print the newly created app id and cache it in a local file `.app_id`
 you may have to modify the path to the sandbox shell script you've installed)
 
 ### If you update the PyTEAL source:
@@ -52,7 +50,7 @@ you may have to modify the path to the sandbox shell script you've installed)
     ./manage.sh update
 
 This will recreate the teal source files, copy them to the sandbox, and call the update app transaction.
-It will use the cached app id from `.app_id` 
+It will use the cached app id from `.app_id`
 
 ### Configure Host and Ports
 
