@@ -69,10 +69,13 @@ def mod(a: abi.Uint64, b: abi.Uint64, *, output: abi.Uint64) -> Expr:
     return output.set(a.get() % b.get())
 
 
+class Qrem_result(abi.NamedTuple):
+    quantity: abi.Field[abi.Uint64]
+    remainder: abi.Field[abi.Uint64]
+
+
 @router.method
-def qrem(
-    a: abi.Uint64, b: abi.Uint64, *, output: abi.Tuple2[abi.Uint64, abi.Uint64]
-) -> Expr:
+def qrem(a: abi.Uint64, b: abi.Uint64, *, output: Qrem_result) -> Expr:
     """divide a by b, and modulo of a by b, return the results as a tuple"""
     return Seq(
         # Use walrus operator to declare a new variable
@@ -230,12 +233,12 @@ def txntest(
         output.set(ptxn.get().amount()),
     )
 
+
 if __name__ == "__main__":
     import os
     import json
 
     path = os.path.dirname(os.path.abspath(__file__))
-
 
     # we use compile program here to get the resulting teal code and Contract definition
     # similarly we could use build_program to return the AST for approval/clear and compile it
@@ -254,4 +257,3 @@ if __name__ == "__main__":
 
     with open(os.path.join(path, "clear.teal"), "w") as f:
         f.write(clear)
-
