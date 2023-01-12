@@ -327,7 +327,7 @@ def concat_dynamic_string_arrays(
         ),
         (_elem_buf := ScratchVar()).store(Bytes("")),
         # Create the offset value we'll use for the position header
-        # we know the first string will start at 2
+        # we know the first string will start at 2 * combined length
         (offset := ScratchVar()).store(((a.length() + b.length()) * Int(2))),
         # strip length and positions, now its [elem0, elem1, elem2]
         (_a := ScratchVar()).store(Suffix(a.encode(), Int(2) + (Int(2) * a.length()))),
