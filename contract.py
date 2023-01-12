@@ -20,7 +20,13 @@ from pyteal import (
     abi,
     Itob,
     Suffix,
+    ExtractUint16,
+    Extract,
 )
+
+# util method for converting an Int to u16 bytes
+def to_u16(i: Expr):
+    return Suffix(Itob(i), Int(6))
 
 
 # Create a simple Expression to use later
@@ -275,9 +281,9 @@ def concat_dynamic_arrays(
     *,
     output: abi.DynamicArray[abi.Uint64],
 ):
-    """demonstrate how two dynamic arrays could be concatt'd"""
+    """demonstrate how two dynamic arrays of static elements could be concat'd"""
     # A Dynamic array of static types is encoded as:
-    # [uint16 length][element 0][element 1]...
+    # [uint16 length, element 0, element 1]
     # so to concat them, we must remove the 2 byte length prefix
     # from each, and prepend the new length (of elements!) as 2 byte integer
     return output.decode(
@@ -300,6 +306,69 @@ def concat_static_arrays(
     # length prefix. The typing of the value includes the length
     # explicitly.
     return output.decode(Concat(a.encode(), b.encode()))
+
+
+@router.method
+def concat_dynamic_string_arrays(
+    a: abi.DynamicArray[abi.String],
+    b: abi.DynamicArray[abi.String],
+    *,
+    output: abi.DynamicArray[abi.String],
+):
+    """demonstrate how two dynamic arrays of dynamic elements could be concat'd"""
+    # A Dynamic array of dynamic types is encoded as:
+    # [uint16 length, uint16 pos elem 0, uint16 pos elem 1, elem 0, elem 1]
+    # so to concat them, we must remove the 2 byte length prefix
+    # from each, and prepend the new length (of elements!) as 2 byte integer
+    return Seq(
+        # Make a couple bufs for the header (offsets) and elements
+        (_head_buf := ScratchVar()).store(
+            Suffix(Itob(a.length() + b.length()), Int(6))
+        ),
+        (_elem_buf := ScratchVar()).store(Bytes("")),
+        # Create the offset value we'll use for the position header
+        # we know the first string will start at 2
+        (offset := ScratchVar()).store(((a.length() + b.length()) * Int(2))),
+        # strip length and positions, now its [elem0, elem1, elem2]
+        (_a := ScratchVar()).store(Suffix(a.encode(), Int(2) + (Int(2) * a.length()))),
+        (_b := ScratchVar()).store(Suffix(b.encode(), Int(2) + (Int(2) * b.length()))),
+        (curr_str_len := ScratchVar()).store(Int(0)),
+        For(
+            (i := ScratchVar()).store(Int(0)),
+            i.load() < a.length(),
+            i.store(i.load() + Int(1)),
+        ).Do(
+            # Get the length of the current string
+            curr_str_len.store(ExtractUint16(_a.load(), Int(0)) + Int(2)),
+            # Store the full string (including its length uint16)
+            _elem_buf.store(
+                Concat(
+                    _elem_buf.load(),
+                    Extract(_a.load(), Int(0), curr_str_len.load()),
+                )
+            ),
+            _head_buf.store(Concat(_head_buf.load(), to_u16(offset.load()))),
+            _a.store(Suffix(_a.load(), curr_str_len.load())),
+            offset.store(offset.load() + curr_str_len.load()),
+        ),
+        For(
+            (i := ScratchVar()).store(Int(0)),
+            i.load() < b.length(),
+            i.store(i.load() + Int(1)),
+        ).Do(
+            curr_str_len.store(ExtractUint16(_b.load(), Int(0)) + Int(2)),
+            _elem_buf.store(
+                Concat(
+                    _elem_buf.load(),
+                    Extract(_b.load(), Int(0), curr_str_len.load()),
+                )
+            ),
+            _head_buf.store(Concat(_head_buf.load(), to_u16(offset.load()))),
+            _b.store(Suffix(_b.load(), curr_str_len.load())),
+            offset.store(offset.load() + curr_str_len.load()),
+        ),
+        output.decode(Concat(_head_buf.load(), _elem_buf.load())),
+    )
 
 
 if __name__ == "__main__":

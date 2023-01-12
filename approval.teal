@@ -2,73 +2,100 @@
 txn NumAppArgs
 int 0
 ==
-bnz main_l34
+bnz main_l36
 txna ApplicationArgs 0
 method "add(uint64,uint64)uint64"
 ==
-bnz main_l33
+bnz main_l35
 txna ApplicationArgs 0
 method "sub(uint64,uint64)uint64"
 ==
-bnz main_l32
+bnz main_l34
 txna ApplicationArgs 0
 method "mul(uint64,uint64)uint64"
 ==
-bnz main_l31
+bnz main_l33
 txna ApplicationArgs 0
 method "div(uint64,uint64)uint64"
 ==
-bnz main_l30
+bnz main_l32
 txna ApplicationArgs 0
 method "mod(uint64,uint64)uint64"
 ==
-bnz main_l29
+bnz main_l31
 txna ApplicationArgs 0
 method "qrem(uint64,uint64)(uint64,uint64)"
 ==
-bnz main_l28
+bnz main_l30
 txna ApplicationArgs 0
 method "reverse(string)string"
 ==
-bnz main_l27
+bnz main_l29
 txna ApplicationArgs 0
 method "concat_strings(string[])string"
 ==
-bnz main_l26
+bnz main_l28
 txna ApplicationArgs 0
 method "make_array(uint64,uint64,uint64)uint64[]"
 ==
-bnz main_l25
+bnz main_l27
 txna ApplicationArgs 0
 method "sum_array(uint64[])uint64"
 ==
-bnz main_l24
+bnz main_l26
 txna ApplicationArgs 0
 method "manyargs(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64"
 ==
-bnz main_l23
+bnz main_l25
 txna ApplicationArgs 0
 method "min_bal(account)uint64"
 ==
-bnz main_l22
+bnz main_l24
 txna ApplicationArgs 0
 method "no_return(uint64)void"
 ==
-bnz main_l21
+bnz main_l23
 txna ApplicationArgs 0
 method "txntest(uint64,pay,uint64)uint64"
 ==
-bnz main_l20
+bnz main_l22
 txna ApplicationArgs 0
 method "concat_dynamic_arrays(uint64[],uint64[])uint64[]"
 ==
-bnz main_l19
+bnz main_l21
 txna ApplicationArgs 0
 method "concat_static_arrays(uint64[3],uint64[3])uint64[6]"
 ==
-bnz main_l18
+bnz main_l20
+txna ApplicationArgs 0
+method "concat_dynamic_string_arrays(string[],string[])string[]"
+==
+bnz main_l19
 err
-main_l18:
+main_l19:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+store 103
+txna ApplicationArgs 2
+store 104
+load 103
+load 104
+callsub concatdynamicstringarrays_16
+store 105
+byte 0x151f7c75
+load 105
+concat
+log
+int 1
+return
+main_l20:
 txn OnCompletion
 int NoOp
 ==
@@ -91,7 +118,7 @@ concat
 log
 int 1
 return
-main_l19:
+main_l21:
 txn OnCompletion
 int NoOp
 ==
@@ -114,7 +141,7 @@ concat
 log
 int 1
 return
-main_l20:
+main_l22:
 txn OnCompletion
 int NoOp
 ==
@@ -150,7 +177,7 @@ concat
 log
 int 1
 return
-main_l21:
+main_l23:
 txn OnCompletion
 int NoOp
 ==
@@ -164,7 +191,7 @@ btoi
 callsub noreturn_12
 int 1
 return
-main_l22:
+main_l24:
 txn OnCompletion
 int NoOp
 ==
@@ -185,7 +212,7 @@ concat
 log
 int 1
 return
-main_l23:
+main_l25:
 txn OnCompletion
 int NoOp
 ==
@@ -291,7 +318,7 @@ concat
 log
 int 1
 return
-main_l24:
+main_l26:
 txn OnCompletion
 int NoOp
 ==
@@ -310,7 +337,7 @@ concat
 log
 int 1
 return
-main_l25:
+main_l27:
 txn OnCompletion
 int NoOp
 ==
@@ -339,7 +366,7 @@ concat
 log
 int 1
 return
-main_l26:
+main_l28:
 txn OnCompletion
 int NoOp
 ==
@@ -357,7 +384,7 @@ concat
 log
 int 1
 return
-main_l27:
+main_l29:
 txn OnCompletion
 int NoOp
 ==
@@ -375,7 +402,7 @@ concat
 log
 int 1
 return
-main_l28:
+main_l30:
 txn OnCompletion
 int NoOp
 ==
@@ -400,7 +427,7 @@ concat
 log
 int 1
 return
-main_l29:
+main_l31:
 txn OnCompletion
 int NoOp
 ==
@@ -426,7 +453,7 @@ concat
 log
 int 1
 return
-main_l30:
+main_l32:
 txn OnCompletion
 int NoOp
 ==
@@ -452,7 +479,7 @@ concat
 log
 int 1
 return
-main_l31:
+main_l33:
 txn OnCompletion
 int NoOp
 ==
@@ -478,7 +505,7 @@ concat
 log
 int 1
 return
-main_l32:
+main_l34:
 txn OnCompletion
 int NoOp
 ==
@@ -504,7 +531,7 @@ concat
 log
 int 1
 return
-main_l33:
+main_l35:
 txn OnCompletion
 int NoOp
 ==
@@ -530,31 +557,31 @@ concat
 log
 int 1
 return
-main_l34:
+main_l36:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l40
+bnz main_l42
 txn OnCompletion
 int UpdateApplication
 ==
-bnz main_l39
+bnz main_l41
 txn OnCompletion
 int DeleteApplication
 ==
-bnz main_l38
+bnz main_l40
 err
-main_l38:
-txn Sender
-global CreatorAddress
-==
-return
-main_l39:
-txn Sender
-global CreatorAddress
-==
-return
 main_l40:
+txn Sender
+global CreatorAddress
+==
+return
+main_l41:
+txn Sender
+global CreatorAddress
+==
+return
+main_l42:
 txn ApplicationID
 int 0
 ==
@@ -809,7 +836,7 @@ retsub
 
 // no_return
 noreturn_12:
-store 103
+store 116
 int 1
 assert
 retsub
@@ -861,5 +888,150 @@ retsub
 
 // concat_static_arrays
 concatstaticarrays_15:
+concat
+retsub
+
+// concat_dynamic_string_arrays
+concatdynamicstringarrays_16:
+store 107
+store 106
+load 106
+int 0
+extract_uint16
+load 107
+int 0
+extract_uint16
++
+itob
+extract 6 0
+store 108
+byte ""
+store 109
+load 106
+int 0
+extract_uint16
+load 107
+int 0
+extract_uint16
++
+int 2
+*
+store 110
+load 106
+int 2
+int 2
+load 106
+int 0
+extract_uint16
+*
++
+dig 1
+len
+substring3
+store 111
+load 107
+int 2
+int 2
+load 107
+int 0
+extract_uint16
+*
++
+dig 1
+len
+substring3
+store 112
+int 0
+store 113
+int 0
+store 114
+concatdynamicstringarrays_16_l1:
+load 114
+load 106
+int 0
+extract_uint16
+<
+bnz concatdynamicstringarrays_16_l5
+int 0
+store 115
+concatdynamicstringarrays_16_l3:
+load 115
+load 107
+int 0
+extract_uint16
+<
+bz concatdynamicstringarrays_16_l6
+load 112
+int 0
+extract_uint16
+int 2
++
+store 113
+load 109
+load 112
+int 0
+load 113
+extract3
+concat
+store 109
+load 108
+load 110
+itob
+extract 6 0
+concat
+store 108
+load 112
+load 113
+dig 1
+len
+substring3
+store 112
+load 110
+load 113
++
+store 110
+load 115
+int 1
++
+store 115
+b concatdynamicstringarrays_16_l3
+concatdynamicstringarrays_16_l5:
+load 111
+int 0
+extract_uint16
+int 2
++
+store 113
+load 109
+load 111
+int 0
+load 113
+extract3
+concat
+store 109
+load 108
+load 110
+itob
+extract 6 0
+concat
+store 108
+load 111
+load 113
+dig 1
+len
+substring3
+store 111
+load 110
+load 113
++
+store 110
+load 114
+int 1
++
+store 114
+b concatdynamicstringarrays_16_l1
+concatdynamicstringarrays_16_l6:
+load 108
+load 109
 concat
 retsub

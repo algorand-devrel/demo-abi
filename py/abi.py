@@ -5,7 +5,7 @@ from algosdk.atomic_transaction_composer import (
     TransactionWithSigner,
 )
 from algosdk.future.transaction import PaymentTxn  # type: ignore
-from algosdk.abi import Contract
+from algosdk.abi import Contract, ABIType
 
 from sandbox import get_accounts
 
@@ -100,6 +100,17 @@ comp.add_method_call(
     signer,
     method_args=[[1, 2, 3], [4, 5, 6]],
 )
+
+
+comp.add_method_call(
+    app_id,
+    c.get_method_by_name("concat_dynamic_string_arrays"),
+    addr,
+    sp,
+    signer,
+    method_args=[["a", "b", "c"], ["d", "e", "f"]],
+)
+
 
 # drr = comp.dryrun(client)
 # for txn in drr.trace.txns:
