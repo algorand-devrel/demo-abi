@@ -17,7 +17,7 @@ initAcct(){
 }
 
 makeTeal() {
-    python3 contract.py
+    #python3 contract.py
     $SB copyTo $app_name
     $SB copyTo $clear_name 
 }
@@ -35,6 +35,7 @@ case $1 in
             --global-byteslices 0 \
             --global-ints 0 \
             --local-ints 0 \
+            --extra-pages 1 \
             --local-byteslices 0  | grep 'Created app' |awk '{print $6}' | tr -d '\r'`
 
         echo $app_id > .app_id

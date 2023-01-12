@@ -138,6 +138,11 @@ def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Ex
         output.set(buff.load()),
     )
 
+@router.method
+def make_array(a: abi.Uint64, b: abi.Uint64, c: abi.Uint64, *, output: abi.DynamicArray[abi.Uint64])->Expr:
+    return Seq(
+        output.set([a,b,c])
+    )
 
 @router.method
 def sum_array(a: abi.DynamicArray[abi.Uint64], *, output: abi.Uint64) -> Expr:

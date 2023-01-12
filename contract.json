@@ -130,6 +130,26 @@
       "desc": "Accept a list of strings, return the result of concating them all"
     },
     {
+      "name": "make_array",
+      "args": [
+        {
+          "type": "uint64",
+          "name": "a"
+        },
+        {
+          "type": "uint64",
+          "name": "b"
+        },
+        {
+          "type": "uint64",
+          "name": "c"
+        }
+      ],
+      "returns": {
+        "type": "uint64[]"
+      }
+    },
+    {
       "name": "sum_array",
       "args": [
         {
@@ -255,7 +275,7 @@
       "returns": {
         "type": "void"
       },
-      "desc": "Just a demonstration of no return value or `void` Omit the `*, output: abi...` from the method signature and void will be used as the return value"
+      "desc": "Just a demonstration of no return value or `void`\nOmit the `*, output: abi...` from the method signature and void will be used as the return value"
     },
     {
       "name": "txntest",
@@ -279,6 +299,5 @@
       "desc": "Useless method that just demonstrates specifying a transaction in the method signature"
     }
   ],
-  "desc": null,
   "networks": {}
 }
