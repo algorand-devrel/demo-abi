@@ -20,7 +20,9 @@ from pyteal import (
     abi,
     Itob,
     Suffix,
+    Len,
     ExtractUint16,
+    While,
     Extract,
 )
 
@@ -325,49 +327,31 @@ def concat_dynamic_string_arrays(
         (_head_buf := ScratchVar()).store(
             Suffix(Itob(a.length() + b.length()), Int(6))
         ),
-        (_elem_buf := ScratchVar()).store(Bytes("")),
+        # Take the element contents of the 2 arrays
+        (_tail_buf := ScratchVar()).store(
+            Concat(
+                # strip length and positions, now its [elem0, elem1, elem2]
+                Suffix(a.encode(), Int(2) + (Int(2) * a.length())),
+                Suffix(b.encode(), Int(2) + (Int(2) * b.length())),
+            )
+        ),
         # Create the offset value we'll use for the position header
         # we know the first string will start at 2 * combined length
         (offset := ScratchVar()).store(((a.length() + b.length()) * Int(2))),
-        # strip length and positions, now its [elem0, elem1, elem2]
-        (_a := ScratchVar()).store(Suffix(a.encode(), Int(2) + (Int(2) * a.length()))),
-        (_b := ScratchVar()).store(Suffix(b.encode(), Int(2) + (Int(2) * b.length()))),
+        # We'll track the current string we're working on here
         (curr_str_len := ScratchVar()).store(Int(0)),
-        For(
-            (i := ScratchVar()).store(Int(0)),
-            i.load() < a.length(),
-            i.store(i.load() + Int(1)),
-        ).Do(
-            # Get the length of the current string
-            curr_str_len.store(ExtractUint16(_a.load(), Int(0)) + Int(2)),
-            # Store the full string (including its length uint16)
-            _elem_buf.store(
-                Concat(
-                    _elem_buf.load(),
-                    Extract(_a.load(), Int(0), curr_str_len.load()),
-                )
-            ),
+        (cursor := ScratchVar()).store(Int(0)),
+        While((cursor.load() + curr_str_len.load()) <= Len(_tail_buf.load())).Do(
+            # Add the offset for this string to the head buf
             _head_buf.store(Concat(_head_buf.load(), to_u16(offset.load()))),
-            _a.store(Suffix(_a.load(), curr_str_len.load())),
+            # Get the length of the current string + 2 bytes for uint16 len
+            curr_str_len.store(ExtractUint16(_tail_buf.load(), cursor.load()) + Int(2)),
+            # update our cursor to point to the next str element
+            cursor.store(cursor.load() + curr_str_len.load()),
+            # update our offset similarly
             offset.store(offset.load() + curr_str_len.load()),
         ),
-        For(
-            (i := ScratchVar()).store(Int(0)),
-            i.load() < b.length(),
-            i.store(i.load() + Int(1)),
-        ).Do(
-            curr_str_len.store(ExtractUint16(_b.load(), Int(0)) + Int(2)),
-            _elem_buf.store(
-                Concat(
-                    _elem_buf.load(),
-                    Extract(_b.load(), Int(0), curr_str_len.load()),
-                )
-            ),
-            _head_buf.store(Concat(_head_buf.load(), to_u16(offset.load()))),
-            _b.store(Suffix(_b.load(), curr_str_len.load())),
-            offset.store(offset.load() + curr_str_len.load()),
-        ),
-        output.decode(Concat(_head_buf.load(), _elem_buf.load())),
+        output.decode(Concat(_head_buf.load(), _tail_buf.load())),
     )
 
 

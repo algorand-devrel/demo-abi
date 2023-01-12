@@ -836,7 +836,7 @@ retsub
 
 // no_return
 noreturn_12:
-store 116
+store 113
 int 1
 assert
 retsub
@@ -905,7 +905,29 @@ extract_uint16
 itob
 extract 6 0
 store 108
-byte ""
+load 106
+int 2
+int 2
+load 106
+int 0
+extract_uint16
+*
++
+dig 1
+len
+substring3
+load 107
+int 2
+int 2
+load 107
+int 0
+extract_uint16
+*
++
+dig 1
+len
+substring3
+concat
 store 109
 load 106
 int 0
@@ -917,120 +939,40 @@ extract_uint16
 int 2
 *
 store 110
-load 106
-int 2
-int 2
-load 106
 int 0
-extract_uint16
-*
-+
-dig 1
-len
-substring3
 store 111
-load 107
-int 2
-int 2
-load 107
 int 0
-extract_uint16
-*
-+
-dig 1
-len
-substring3
 store 112
-int 0
-store 113
-int 0
-store 114
 concatdynamicstringarrays_16_l1:
-load 114
-load 106
-int 0
-extract_uint16
-<
-bnz concatdynamicstringarrays_16_l5
-int 0
-store 115
-concatdynamicstringarrays_16_l3:
-load 115
-load 107
-int 0
-extract_uint16
-<
-bz concatdynamicstringarrays_16_l6
 load 112
-int 0
-extract_uint16
-int 2
+load 111
 +
-store 113
 load 109
-load 112
-int 0
-load 113
-extract3
-concat
-store 109
+len
+<=
+bz concatdynamicstringarrays_16_l3
 load 108
 load 110
 itob
 extract 6 0
 concat
 store 108
+load 109
 load 112
-load 113
-dig 1
-len
-substring3
+extract_uint16
+int 2
++
+store 111
+load 112
+load 111
++
 store 112
 load 110
-load 113
+load 111
 +
 store 110
-load 115
-int 1
-+
-store 115
-b concatdynamicstringarrays_16_l3
-concatdynamicstringarrays_16_l5:
-load 111
-int 0
-extract_uint16
-int 2
-+
-store 113
-load 109
-load 111
-int 0
-load 113
-extract3
-concat
-store 109
-load 108
-load 110
-itob
-extract 6 0
-concat
-store 108
-load 111
-load 113
-dig 1
-len
-substring3
-store 111
-load 110
-load 113
-+
-store 110
-load 114
-int 1
-+
-store 114
 b concatdynamicstringarrays_16_l1
-concatdynamicstringarrays_16_l6:
+concatdynamicstringarrays_16_l3:
 load 108
 load 109
 concat

@@ -119,4 +119,6 @@ comp.add_method_call(
 
 resp = comp.execute(client, 2)
 for result in resp.abi_results:
+    # print(result.decode_error)
+    # print(result.raw_value.hex())
     print(f"{result.method.name} => {result.return_value}")
