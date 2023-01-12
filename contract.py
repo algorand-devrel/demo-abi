@@ -23,7 +23,6 @@ from pyteal import (
     Len,
     ExtractUint16,
     While,
-    Extract,
 )
 
 # util method for converting an Int to u16 bytes
@@ -276,6 +275,25 @@ def txntest(
     )
 
 
+# While its not adivsable to make heavy use dynamic ABI
+# types within the logic of the contract due to the inefficient
+# access to elements, below are some examples of how you
+# might construct a larger array from 2 smaller ones
+
+
+@router.method
+def concat_static_arrays(
+    a: abi.StaticArray[abi.Uint64, Literal[3]],
+    b: abi.StaticArray[abi.Uint64, Literal[3]],
+    *,
+    output: abi.StaticArray[abi.Uint64, Literal[6]],
+):
+    # Static arrays are easy to concat since there is no
+    # length prefix or offsets to track. The typing of the
+    # value includes the length explicitly.
+    return output.decode(Concat(a.encode(), b.encode()))
+
+
 @router.method
 def concat_dynamic_arrays(
     a: abi.DynamicArray[abi.Uint64],
@@ -298,19 +316,6 @@ def concat_dynamic_arrays(
 
 
 @router.method
-def concat_static_arrays(
-    a: abi.StaticArray[abi.Uint64, Literal[3]],
-    b: abi.StaticArray[abi.Uint64, Literal[3]],
-    *,
-    output: abi.StaticArray[abi.Uint64, Literal[6]],
-):
-    # Static arrays are easier to concat since there is no
-    # length prefix. The typing of the value includes the length
-    # explicitly.
-    return output.decode(Concat(a.encode(), b.encode()))
-
-
-@router.method
 def concat_dynamic_string_arrays(
     a: abi.DynamicArray[abi.String],
     b: abi.DynamicArray[abi.String],
@@ -318,6 +323,10 @@ def concat_dynamic_string_arrays(
     output: abi.DynamicArray[abi.String],
 ):
     """demonstrate how two dynamic arrays of dynamic elements could be concat'd"""
+    # NOTE: this is not efficient (clearly), static types should
+    # always be preferred if possible. Otherwise use some encoding
+    # other than the abi encoding, which is more for serializing/deserializing data
+
     # A Dynamic array of dynamic types is encoded as:
     # [uint16 length, uint16 pos elem 0, uint16 pos elem 1, elem 0, elem 1]
     # so to concat them, we must remove the 2 byte length prefix
