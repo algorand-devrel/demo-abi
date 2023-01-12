@@ -1,4 +1,23 @@
-from pyteal import *
+from pyteal import (
+    Approve,
+    Assert,
+    BareCallActions,
+    Bytes,
+    Concat,
+    Expr,
+    For,
+    Global,
+    Int,
+    OnCompleteAction,
+    OptimizeOptions,
+    Return,
+    Router,
+    ScratchVar,
+    Seq,
+    Txn,
+    TxnType,
+    abi,
+)
 
 
 # Create a simple Expression to use later
@@ -18,8 +37,8 @@ router = Router(
         # No local state, dont bother handling it
         # close_out=OnCompleteAction.never(),
         # opt_in=OnCompleteAction.never(),
-        # Just be nice, we _must_ provide _something_ for clear state becuase it is its own
-        # program and the router needs _something_ to build
+        # Just be nice, we _must_ provide _something_ for clear state
+        # becuase it is its own program and the router needs _something_ to build
         # clear_state=OnCompleteAction.call_only(Approve()),
         clear_state=OnCompleteAction.never(),
     ),
@@ -105,12 +124,14 @@ def reverse(a: abi.String, *, output: abi.String) -> Expr:
             # a is a `string`, which is a byte[] or dynamic array of bytes
             # we can access individual bytes with the square bracket notation
             # this returns a ComputedValue[T] having methods `use` and `store_into`
-            # `use` is passed a lambda that "unwraps" the underlying ABI type, allowing us to
-            # use it as we might expect for `abi.Byte`. Since we want to treat the Byte as a bytestring
-            # we just use encode to marshal it out to bytestring, using `.get()` would return a uint64
+            # `use` is passed a lambda that "unwraps" the underlying ABI type,
+            # allowing us to use it as we might expect for `abi.Byte`. Since we want
+            # to treat the Byte as a bytestring we just use encode to marshal it out
+            # to bytestring, using `.get()` would return a uint64
             a[idx.load()].use(lambda v: buff.store(Concat(v.encode(), buff.load())))
-            # Using store_into would take an abi type we want to put the value in. You may also
-            # pass a ComputedValue[T] in to an appropriate `set` method and it uses `store_into` under the covers
+            # Using store_into would take an abi type we want to put the value in.
+            # You may also pass a ComputedValue[T] in to an appropriate `set` method
+            # which uses `store_into` under the covers
             # ex: (b := abi.Byte()).set(a[idx.load()])
         ),
         output.set(buff.load()),
@@ -130,19 +151,22 @@ def concat_strings(b: abi.DynamicArray[abi.String], *, output: abi.String) -> Ex
     return Seq(
         buff.store(Bytes("")),
         For(init, cond, iter).Do(
-            # Similar to `abi.String` type in the previous method, b[idx.load()] returns
-            # a ComputedValue[T], since we want the String we can just use `s.get()` here to
+            # Similar to `abi.String` type in the previous method, b[idx.load()]
+            # returns a ComputedValue[T], since we want the String we
+            # can just use `s.get()` here to
             # dump out the bytes
             b[idx.load()].use(lambda s: buff.store(Concat(buff.load(), s.get())))
         ),
         output.set(buff.load()),
     )
 
+
 @router.method
-def make_array(a: abi.Uint64, b: abi.Uint64, c: abi.Uint64, *, output: abi.DynamicArray[abi.Uint64])->Expr:
-    return Seq(
-        output.set([a,b,c])
-    )
+def make_array(
+    a: abi.Uint64, b: abi.Uint64, c: abi.Uint64, *, output: abi.DynamicArray[abi.Uint64]
+) -> Expr:
+    return Seq(output.set([a, b, c]))
+
 
 @router.method
 def sum_array(a: abi.DynamicArray[abi.Uint64], *, output: abi.Uint64) -> Expr:
@@ -192,16 +216,17 @@ def manyargs(
     *,
     output: abi.Uint64,
 ) -> Expr:
-    """Lots of args here, internally they get tuple'd after the 15th arg, but atc and router handles this for us"""
+    """Lots of args here, internally they get tuple'd after the 15th arg,
+    but atc and router handles this for us"""
     return output.set(a.get())
 
 
 @router.method
 def min_bal(acct: abi.Account, *, output: abi.Uint64):
     """Return the minimum balance for the passed account"""
-    # acct is a `reference` type and is passed in the `accounts` array of the transaction
-    # this lets us look up information about the account or send to the account from
-    # some inner transaction
+    # acct is a `reference` type and is passed in the `accounts`
+    # array of the transaction # this lets us look up information about the
+    # account or send to the account from some inner transaction
     # using `acct.address()` will return the address of the account and
     # `acct.params()` returns a parameters object to inspect other fields
     # this is a similar pattern for Account/Asset/Application types
@@ -226,7 +251,8 @@ def txntest(
     *,
     output: abi.Uint64,
 ):
-    """Useless method that just demonstrates specifying a transaction in the method signature"""
+    """Useless method that just demonstrates specifying a
+    transaction in the method signature"""
     # Transaction types may be specified but aren't part of the application arguments
     # you can get the underlying TxnObject with ptxn.get() and perform all the expected
     # functions on it to get access to the fields
@@ -245,8 +271,9 @@ if __name__ == "__main__":
 
     path = os.path.dirname(os.path.abspath(__file__))
 
-    # we use compile program here to get the resulting teal code and Contract definition
-    # similarly we could use build_program to return the AST for approval/clear and compile it
+    # we use compile program here to get the resulting teal code
+    # and Contract definition, similarly we could use build_program
+    # to return the AST for approval/clear and compile it
     # ourselves, but why?
     approval, clear, contract = router.compile_program(
         version=6, optimize=OptimizeOptions(scratch_slots=True)

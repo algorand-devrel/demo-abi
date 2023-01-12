@@ -4,7 +4,7 @@ from algosdk.atomic_transaction_composer import (
     AtomicTransactionComposer,
     TransactionWithSigner,
 )
-from algosdk.future.transaction import PaymentTxn # type: ignore
+from algosdk.future.transaction import PaymentTxn  # type: ignore
 from algosdk.abi import Contract
 
 from sandbox import get_accounts
