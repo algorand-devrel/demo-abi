@@ -249,7 +249,7 @@
       "returns": {
         "type": "uint64"
       },
-      "desc": "Lots of args here, internally they get tuple'd after the 15th arg, but atc and router handles this for us"
+      "desc": "Lots of args here, internally they get tuple'd after the 15th arg,\nbut atc and router handles this for us"
     },
     {
       "name": "min_bal",
@@ -296,7 +296,39 @@
       "returns": {
         "type": "uint64"
       },
-      "desc": "Useless method that just demonstrates specifying a transaction in the method signature"
+      "desc": "Useless method that just demonstrates specifying a\ntransaction in the method signature"
+    },
+    {
+      "name": "concat_dynamic_arrays",
+      "args": [
+        {
+          "type": "uint64[]",
+          "name": "a"
+        },
+        {
+          "type": "uint64[]",
+          "name": "b"
+        }
+      ],
+      "returns": {
+        "type": "uint64[]"
+      }
+    },
+    {
+      "name": "concat_static_arrays",
+      "args": [
+        {
+          "type": "uint64[3]",
+          "name": "a"
+        },
+        {
+          "type": "uint64[3]",
+          "name": "b"
+        }
+      ],
+      "returns": {
+        "type": "uint64[6]"
+      }
     }
   ],
   "networks": {}

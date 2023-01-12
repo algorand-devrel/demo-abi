@@ -1,66 +1,120 @@
-#pragma version 6
+#pragma version 8
 txn NumAppArgs
 int 0
 ==
-bnz main_l30
+bnz main_l34
 txna ApplicationArgs 0
 method "add(uint64,uint64)uint64"
 ==
-bnz main_l29
+bnz main_l33
 txna ApplicationArgs 0
 method "sub(uint64,uint64)uint64"
 ==
-bnz main_l28
+bnz main_l32
 txna ApplicationArgs 0
 method "mul(uint64,uint64)uint64"
 ==
-bnz main_l27
+bnz main_l31
 txna ApplicationArgs 0
 method "div(uint64,uint64)uint64"
 ==
-bnz main_l26
+bnz main_l30
 txna ApplicationArgs 0
 method "mod(uint64,uint64)uint64"
 ==
-bnz main_l25
+bnz main_l29
 txna ApplicationArgs 0
 method "qrem(uint64,uint64)(uint64,uint64)"
 ==
-bnz main_l24
+bnz main_l28
 txna ApplicationArgs 0
 method "reverse(string)string"
 ==
-bnz main_l23
+bnz main_l27
 txna ApplicationArgs 0
 method "concat_strings(string[])string"
 ==
-bnz main_l22
+bnz main_l26
 txna ApplicationArgs 0
 method "make_array(uint64,uint64,uint64)uint64[]"
 ==
-bnz main_l21
+bnz main_l25
 txna ApplicationArgs 0
 method "sum_array(uint64[])uint64"
 ==
-bnz main_l20
+bnz main_l24
 txna ApplicationArgs 0
 method "manyargs(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64"
 ==
-bnz main_l19
+bnz main_l23
 txna ApplicationArgs 0
 method "min_bal(account)uint64"
 ==
-bnz main_l18
+bnz main_l22
 txna ApplicationArgs 0
 method "no_return(uint64)void"
 ==
-bnz main_l17
+bnz main_l21
 txna ApplicationArgs 0
 method "txntest(uint64,pay,uint64)uint64"
 ==
-bnz main_l16
+bnz main_l20
+txna ApplicationArgs 0
+method "concat_dynamic_arrays(uint64[],uint64[])uint64[]"
+==
+bnz main_l19
+txna ApplicationArgs 0
+method "concat_static_arrays(uint64[3],uint64[3])uint64[6]"
+==
+bnz main_l18
 err
-main_l16:
+main_l18:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+store 100
+txna ApplicationArgs 2
+store 101
+load 100
+load 101
+callsub concatstaticarrays_15
+store 102
+byte 0x151f7c75
+load 102
+concat
+log
+int 1
+return
+main_l19:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+store 95
+txna ApplicationArgs 2
+store 96
+load 95
+load 96
+callsub concatdynamicarrays_14
+store 97
+byte 0x151f7c75
+load 97
+concat
+log
+int 1
+return
+main_l20:
 txn OnCompletion
 int NoOp
 ==
@@ -96,7 +150,7 @@ concat
 log
 int 1
 return
-main_l17:
+main_l21:
 txn OnCompletion
 int NoOp
 ==
@@ -110,7 +164,7 @@ btoi
 callsub noreturn_12
 int 1
 return
-main_l18:
+main_l22:
 txn OnCompletion
 int NoOp
 ==
@@ -131,7 +185,7 @@ concat
 log
 int 1
 return
-main_l19:
+main_l23:
 txn OnCompletion
 int NoOp
 ==
@@ -237,7 +291,7 @@ concat
 log
 int 1
 return
-main_l20:
+main_l24:
 txn OnCompletion
 int NoOp
 ==
@@ -256,7 +310,7 @@ concat
 log
 int 1
 return
-main_l21:
+main_l25:
 txn OnCompletion
 int NoOp
 ==
@@ -285,7 +339,7 @@ concat
 log
 int 1
 return
-main_l22:
+main_l26:
 txn OnCompletion
 int NoOp
 ==
@@ -303,7 +357,7 @@ concat
 log
 int 1
 return
-main_l23:
+main_l27:
 txn OnCompletion
 int NoOp
 ==
@@ -321,7 +375,7 @@ concat
 log
 int 1
 return
-main_l24:
+main_l28:
 txn OnCompletion
 int NoOp
 ==
@@ -346,7 +400,7 @@ concat
 log
 int 1
 return
-main_l25:
+main_l29:
 txn OnCompletion
 int NoOp
 ==
@@ -372,7 +426,7 @@ concat
 log
 int 1
 return
-main_l26:
+main_l30:
 txn OnCompletion
 int NoOp
 ==
@@ -398,7 +452,7 @@ concat
 log
 int 1
 return
-main_l27:
+main_l31:
 txn OnCompletion
 int NoOp
 ==
@@ -424,7 +478,7 @@ concat
 log
 int 1
 return
-main_l28:
+main_l32:
 txn OnCompletion
 int NoOp
 ==
@@ -450,7 +504,7 @@ concat
 log
 int 1
 return
-main_l29:
+main_l33:
 txn OnCompletion
 int NoOp
 ==
@@ -476,31 +530,31 @@ concat
 log
 int 1
 return
-main_l30:
+main_l34:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l36
+bnz main_l40
 txn OnCompletion
 int UpdateApplication
 ==
-bnz main_l35
+bnz main_l39
 txn OnCompletion
 int DeleteApplication
 ==
-bnz main_l34
+bnz main_l38
 err
-main_l34:
+main_l38:
 txn Sender
 global CreatorAddress
 ==
 return
-main_l35:
+main_l39:
 txn Sender
 global CreatorAddress
 ==
 return
-main_l36:
+main_l40:
 txn ApplicationID
 int 0
 ==
@@ -755,7 +809,7 @@ retsub
 
 // no_return
 noreturn_12:
-store 95
+store 103
 int 1
 assert
 retsub
@@ -782,4 +836,30 @@ load 94
 assert
 load 93
 gtxns Amount
+retsub
+
+// concat_dynamic_arrays
+concatdynamicarrays_14:
+store 99
+store 98
+load 98
+int 0
+extract_uint16
+load 99
+int 0
+extract_uint16
++
+itob
+extract 6 0
+load 98
+extract 2 0
+concat
+load 99
+extract 2 0
+concat
+retsub
+
+// concat_static_arrays
+concatstaticarrays_15:
+concat
 retsub

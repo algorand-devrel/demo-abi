@@ -83,6 +83,24 @@ comp.add_method_call(
     method_args=[["this", "string", "is", "joined"]],
 )
 
+comp.add_method_call(
+    app_id,
+    c.get_method_by_name("concat_dynamic_arrays"),
+    addr,
+    sp,
+    signer,
+    method_args=[[1, 2, 3], [4, 5, 6]],
+)
+
+comp.add_method_call(
+    app_id,
+    c.get_method_by_name("concat_static_arrays"),
+    addr,
+    sp,
+    signer,
+    method_args=[[1, 2, 3], [4, 5, 6]],
+)
+
 # drr = comp.dryrun(client)
 # for txn in drr.trace.txns:
 #    if txn.app_call_rejected():

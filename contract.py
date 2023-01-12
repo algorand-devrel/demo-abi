@@ -1,3 +1,4 @@
+from typing import Literal
 from pyteal import (
     Approve,
     Assert,
@@ -17,6 +18,8 @@ from pyteal import (
     Txn,
     TxnType,
     abi,
+    Itob,
+    Suffix,
 )
 
 
@@ -265,6 +268,40 @@ def txntest(
     )
 
 
+@router.method
+def concat_dynamic_arrays(
+    a: abi.DynamicArray[abi.Uint64],
+    b: abi.DynamicArray[abi.Uint64],
+    *,
+    output: abi.DynamicArray[abi.Uint64],
+):
+    """demonstrate how two dynamic arrays could be concatt'd"""
+    # A Dynamic array of static types is encoded as:
+    # [uint16 length][element 0][element 1]...
+    # so to concat them, we must remove the 2 byte length prefix
+    # from each, and prepend the new length (of elements!) as 2 byte integer
+    return output.decode(
+        Concat(
+            Suffix(Itob(a.length() + b.length()), Int(6)),
+            Suffix(a.encode(), Int(2)),
+            Suffix(b.encode(), Int(2)),
+        )
+    )
+
+
+@router.method
+def concat_static_arrays(
+    a: abi.StaticArray[abi.Uint64, Literal[3]],
+    b: abi.StaticArray[abi.Uint64, Literal[3]],
+    *,
+    output: abi.StaticArray[abi.Uint64, Literal[6]],
+):
+    # Static arrays are easier to concat since there is no
+    # length prefix. The typing of the value includes the length
+    # explicitly.
+    return output.decode(Concat(a.encode(), b.encode()))
+
+
 if __name__ == "__main__":
     import os
     import json
@@ -276,7 +313,7 @@ if __name__ == "__main__":
     # to return the AST for approval/clear and compile it
     # ourselves, but why?
     approval, clear, contract = router.compile_program(
-        version=6, optimize=OptimizeOptions(scratch_slots=True)
+        version=8, optimize=OptimizeOptions(scratch_slots=True)
     )
 
     # Dump out the contract as json that can be read in by any of the SDKs
