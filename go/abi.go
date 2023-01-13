@@ -27,6 +27,18 @@ func main() {
 		log.Fatalf("Failed to init client: %+v", err)
 	}
 
+	block, err := client.Block(1886).Do(context.Background())
+	if err != nil {
+		log.Fatalf("FAIL: %+v", err)
+	}
+	for _, stxn := range block.Payset {
+		for _, l := range stxn.EvalDelta.Logs {
+			log.Printf("%+v", []byte(l))
+		}
+	}
+
+	return
+
 	accts, err := GetAccounts()
 	if err != nil {
 		log.Fatalf("Failed to get accounts: %+v", err)
@@ -111,6 +123,7 @@ func main() {
 	}
 
 	for _, r := range ret.MethodResults {
+		log.Printf("%+v", r.TransactionInfo.Logs)
 		log.Printf("%s returned %+v", r.Method.Name, r.ReturnValue)
 	}
 }

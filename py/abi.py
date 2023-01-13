@@ -4,12 +4,32 @@ from algosdk.atomic_transaction_composer import (
     AtomicTransactionComposer,
     TransactionWithSigner,
 )
-from algosdk.future.transaction import PaymentTxn  # type: ignore
+from algosdk.transaction import PaymentTxn, AssetCreateTxn
 from algosdk.abi import Contract, ABIType
 
 from sandbox import get_accounts
 
 client = AlgodClient("a" * 64, "http://localhost:4001")
+
+
+addr, sk = get_accounts()[0]
+
+print(addr)
+
+act = AssetCreateTxn(
+    sender=addr,
+    sp=client.suggested_params(),
+    total=1000,
+    decimals=1,
+    default_frozen=False,
+    manager=addr,
+    asset_name="asdfasdf",
+    unit_name="aaa",
+)
+
+stxn = act.sign(sk)
+print(stxn.__dict__)
+
 
 with open("../contract.json") as f:
     js = f.read()
@@ -19,7 +39,6 @@ with open("../.app_id") as f:
 
 c = Contract.from_json(js)
 
-addr, sk = get_accounts()[0]
 signer = AccountTransactionSigner(sk)
 
 comp = AtomicTransactionComposer()

@@ -299,6 +299,22 @@
       "desc": "Useless method that just demonstrates specifying a\ntransaction in the method signature"
     },
     {
+      "name": "concat_static_arrays",
+      "args": [
+        {
+          "type": "uint64[3]",
+          "name": "a"
+        },
+        {
+          "type": "uint64[3]",
+          "name": "b"
+        }
+      ],
+      "returns": {
+        "type": "uint64[6]"
+      }
+    },
+    {
       "name": "concat_dynamic_arrays",
       "args": [
         {
@@ -314,22 +330,6 @@
         "type": "uint64[]"
       },
       "desc": "demonstrate how two dynamic arrays of static elements could be concat'd"
-    },
-    {
-      "name": "concat_static_arrays",
-      "args": [
-        {
-          "type": "uint64[3]",
-          "name": "a"
-        },
-        {
-          "type": "uint64[3]",
-          "name": "b"
-        }
-      ],
-      "returns": {
-        "type": "uint64[6]"
-      }
     },
     {
       "name": "concat_dynamic_string_arrays",

@@ -60,11 +60,11 @@ method "txntest(uint64,pay,uint64)uint64"
 ==
 bnz main_l22
 txna ApplicationArgs 0
-method "concat_dynamic_arrays(uint64[],uint64[])uint64[]"
+method "concat_static_arrays(uint64[3],uint64[3])uint64[6]"
 ==
 bnz main_l21
 txna ApplicationArgs 0
-method "concat_static_arrays(uint64[3],uint64[3])uint64[6]"
+method "concat_dynamic_arrays(uint64[],uint64[])uint64[]"
 ==
 bnz main_l20
 txna ApplicationArgs 0
@@ -105,15 +105,15 @@ int 0
 &&
 assert
 txna ApplicationArgs 1
-store 100
+store 98
 txna ApplicationArgs 2
-store 101
-load 100
-load 101
-callsub concatstaticarrays_15
-store 102
+store 99
+load 98
+load 99
+callsub concatdynamicarrays_15
+store 100
 byte 0x151f7c75
-load 102
+load 100
 concat
 log
 int 1
@@ -133,7 +133,7 @@ txna ApplicationArgs 2
 store 96
 load 95
 load 96
-callsub concatdynamicarrays_14
+callsub concatstaticarrays_14
 store 97
 byte 0x151f7c75
 load 97
@@ -865,29 +865,29 @@ load 93
 gtxns Amount
 retsub
 
+// concat_static_arrays
+concatstaticarrays_14:
+concat
+retsub
+
 // concat_dynamic_arrays
-concatdynamicarrays_14:
-store 99
-store 98
-load 98
+concatdynamicarrays_15:
+store 102
+store 101
+load 101
 int 0
 extract_uint16
-load 99
+load 102
 int 0
 extract_uint16
 +
 itob
 extract 6 0
-load 98
+load 101
 extract 2 0
 concat
-load 99
+load 102
 extract 2 0
-concat
-retsub
-
-// concat_static_arrays
-concatstaticarrays_15:
 concat
 retsub
 
