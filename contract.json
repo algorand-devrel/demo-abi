@@ -2,6 +2,34 @@
   "name": "demo-abi",
   "methods": [
     {
+      "name": "box_write",
+      "args": [
+        {
+          "type": "byte[]",
+          "name": "name"
+        },
+        {
+          "type": "(uint64,uint64)",
+          "name": "contents"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "box_read",
+      "args": [
+        {
+          "type": "byte[]",
+          "name": "name"
+        }
+      ],
+      "returns": {
+        "type": "(uint64,uint64)"
+      }
+    },
+    {
       "name": "add",
       "args": [
         {
@@ -297,56 +325,6 @@
         "type": "uint64"
       },
       "desc": "Useless method that just demonstrates specifying a\ntransaction in the method signature"
-    },
-    {
-      "name": "concat_static_arrays",
-      "args": [
-        {
-          "type": "uint64[3]",
-          "name": "a"
-        },
-        {
-          "type": "uint64[3]",
-          "name": "b"
-        }
-      ],
-      "returns": {
-        "type": "uint64[6]"
-      }
-    },
-    {
-      "name": "concat_dynamic_arrays",
-      "args": [
-        {
-          "type": "uint64[]",
-          "name": "a"
-        },
-        {
-          "type": "uint64[]",
-          "name": "b"
-        }
-      ],
-      "returns": {
-        "type": "uint64[]"
-      },
-      "desc": "demonstrate how two dynamic arrays of static elements could be concat'd"
-    },
-    {
-      "name": "concat_dynamic_string_arrays",
-      "args": [
-        {
-          "type": "string[]",
-          "name": "a"
-        },
-        {
-          "type": "string[]",
-          "name": "b"
-        }
-      ],
-      "returns": {
-        "type": "string[]"
-      },
-      "desc": "demonstrate how two dynamic arrays of dynamic elements could be concat'd"
     }
   ],
   "networks": {}

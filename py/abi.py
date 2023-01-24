@@ -5,7 +5,7 @@ from algosdk.atomic_transaction_composer import (
     TransactionWithSigner,
 )
 from algosdk.transaction import PaymentTxn, AssetCreateTxn
-from algosdk.abi import Contract, ABIType
+from algosdk.abi import Contract
 
 from sandbox import get_accounts
 

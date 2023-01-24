@@ -1,8 +1,9 @@
-from typing import Literal
 from pyteal import (
     Approve,
     Assert,
     BareCallActions,
+    BoxGet,
+    BoxPut,
     Bytes,
     Concat,
     Expr,
@@ -18,11 +19,6 @@ from pyteal import (
     Txn,
     TxnType,
     abi,
-    Itob,
-    Suffix,
-    Len,
-    ExtractUint16,
-    While,
 )
 
 # Create a simple Expression to use later
@@ -47,6 +43,23 @@ router = Router(
         clear_state=OnCompleteAction.call_only(Approve()),
     ),
 )
+
+class CoolTuple(abi.NamedTuple):
+    id: abi.Field[abi.Uint64]
+    balance: abi.Field[abi.Uint64]
+
+@router.method
+def box_write(name: abi.DynamicBytes, contents: CoolTuple):
+    return BoxPut(name.get(), contents.encode())
+
+@router.method
+def box_read(name: abi.DynamicBytes, *, output: CoolTuple):
+    return Seq(
+        contents := BoxGet(name.get()),
+        Assert(contents.hasValue()),
+        output.decode(contents.value())
+    )
+
 
 # This decorator lets you add a new method to be handled by the router
 # this will generate a method with signature `add(uint64,uint64)uint64`

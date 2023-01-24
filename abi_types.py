@@ -1,22 +1,14 @@
 from typing import Literal
 from pyteal import (
     Approve,
-    Assert,
     BareCallActions,
-    Bytes,
     Concat,
     Expr,
-    For,
-    Global,
     Int,
     OnCompleteAction,
-    OptimizeOptions,
-    Return,
     Router,
     ScratchVar,
     Seq,
-    Txn,
-    TxnType,
     abi,
     Itob,
     Suffix,
@@ -30,25 +22,12 @@ def to_u16(i: Expr):
     return Suffix(Itob(i), Int(6))
 
 
-# Create a simple Expression to use later
-is_creator = Txn.sender() == Global.creator_address()
-
-# Main router class
 router = Router(
-    # Name of the contract
     "demo-abi-types",
-    # What to do for each on-complete type when no arguments are passed (bare call)
     BareCallActions(
-        # On create only, just approve
         no_op=OnCompleteAction.create_only(Approve()),
-        # Always let creator update/delete but only by the creator of this contract
-        update_application=OnCompleteAction.always(Return(is_creator)),
-        delete_application=OnCompleteAction.always(Return(is_creator)),
-        # No local state, dont bother handling it
-        # close_out=OnCompleteAction.never(),
-        # opt_in=OnCompleteAction.never(),
-        # Just be nice, we _must_ provide _something_ for clear state
-        # becuase it is its own program and the router needs _something_ to build
+        update_application=OnCompleteAction.always(Approve()),
+        delete_application=OnCompleteAction.always(Approve()),
         clear_state=OnCompleteAction.call_only(Approve()),
     ),
 )
@@ -141,3 +120,16 @@ def concat_dynamic_string_arrays(
         ),
         output.decode(Concat(_head_buf.load(), _tail_buf.load())),
     )
+
+
+
+class Order(abi.NamedTuple):
+    item: abi.Field[abi.Uint64]
+    amount: abi.Field[abi.Uint32]
+    note: abi.Field[abi.String]
+
+
+@router.method
+def place_order(o: Order):
+    pass
+

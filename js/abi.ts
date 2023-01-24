@@ -1,4 +1,8 @@
-import algosdk, { decodeAddress, Transaction } from "algosdk";
+import algosdk, {
+  decodeAddress,
+  makePaymentTxnWithSuggestedParamsFromObject,
+  Transaction,
+} from "algosdk";
 import * as fs from "fs";
 import { Buffer } from "buffer";
 import { getAccounts } from "./sandbox";
@@ -22,11 +26,23 @@ const algod_port = "4001";
   // Parse the json file into an object, pass it to create an ABIContract object
   const contract = new algosdk.ABIContract(JSON.parse(buff.toString()));
 
+  // Get the app id for the app we created with `./manage.sh` earlier
   const appId = parseInt(fs.readFileSync("../.app_id").toString());
+
+  // Get sp once, we'll reuse it
+  const sp = await client.getTransactionParams().do();
+
+  // Fund the app address so it can create boxes
+  const ptxn = makePaymentTxnWithSuggestedParamsFromObject({
+    from: acct.addr,
+    suggestedParams: sp,
+    to: algosdk.getApplicationAddress(appId),
+    amount: 1_000_000_000,
+  }).signTxn(acct.sk);
+  await client.sendRawTransaction(ptxn).do();
 
   // We initialize the common parameters here, they'll be passed to all the transactions
   // since they happen to be the same
-  const sp = await client.getTransactionParams().do();
   const commonParams = {
     appID: appId,
     sender: acct.addr,
@@ -34,9 +50,26 @@ const algod_port = "4001";
     signer: algosdk.makeBasicAccountTransactionSigner(acct),
   };
 
-  const comp = new algosdk.AtomicTransactionComposer();
+  // Write then read a box
+  const boxComp = new algosdk.AtomicTransactionComposer();
+  const boxName = new Uint8Array(Buffer.from("cool_box"));
+  boxComp.addMethodCall({
+    method: contract.getMethodByName("box_write"),
+    methodArgs: [boxName, [123, 456]],
+    boxes: [{ appIndex: 0, name: boxName }],
+    ...commonParams,
+  });
+  boxComp.addMethodCall({
+    method: contract.getMethodByName("box_read"),
+    methodArgs: [boxName],
+    boxes: [{ appIndex: 0, name: boxName }],
+    ...commonParams,
+  });
+  const boxResult = await boxComp.execute(client, 4);
+  console.log("Box contents: ", boxResult.methodResults[1].returnValue);
 
   // Simple ABI Calls with standard arguments, return type
+  const comp = new algosdk.AtomicTransactionComposer();
   comp.addMethodCall({
     method: contract.getMethodByName("add"),
     methodArgs: [1, 1],
