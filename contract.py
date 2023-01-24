@@ -44,20 +44,23 @@ router = Router(
     ),
 )
 
+
 class CoolTuple(abi.NamedTuple):
     id: abi.Field[abi.Uint64]
     balance: abi.Field[abi.Uint64]
 
+
 @router.method
 def box_write(name: abi.DynamicBytes, contents: CoolTuple):
     return BoxPut(name.get(), contents.encode())
+
 
 @router.method
 def box_read(name: abi.DynamicBytes, *, output: CoolTuple):
     return Seq(
         contents := BoxGet(name.get()),
         Assert(contents.hasValue()),
-        output.decode(contents.value())
+        output.decode(contents.value()),
     )
 
 

@@ -122,7 +122,6 @@ def concat_dynamic_string_arrays(
     )
 
 
-
 class Order(abi.NamedTuple):
     item: abi.Field[abi.Uint64]
     amount: abi.Field[abi.Uint32]
@@ -132,4 +131,3 @@ class Order(abi.NamedTuple):
 @router.method
 def place_order(o: Order):
     pass
-

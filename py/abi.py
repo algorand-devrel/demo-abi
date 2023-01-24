@@ -6,6 +6,7 @@ from algosdk.atomic_transaction_composer import (
 )
 from algosdk.transaction import PaymentTxn, AssetCreateTxn
 from algosdk.abi import Contract
+from algosdk.logic import get_application_address
 
 from sandbox import get_accounts
 
@@ -14,36 +15,51 @@ client = AlgodClient("a" * 64, "http://localhost:4001")
 
 addr, sk = get_accounts()[0]
 
-print(addr)
-
-act = AssetCreateTxn(
-    sender=addr,
-    sp=client.suggested_params(),
-    total=1000,
-    decimals=1,
-    default_frozen=False,
-    manager=addr,
-    asset_name="asdfasdf",
-    unit_name="aaa",
-)
-
-stxn = act.sign(sk)
-print(stxn.__dict__)
-
-
 with open("../contract.json") as f:
     js = f.read()
 
 with open("../.app_id") as f:
     app_id = int(f.read())
 
+app_addr = get_application_address(app_id)
+
 c = Contract.from_json(js)
 
 signer = AccountTransactionSigner(sk)
+sp = client.suggested_params()
+
+
+box_comp = AtomicTransactionComposer()
+box_name = b"cool_box"
+box_comp.add_transaction(
+    TransactionWithSigner(PaymentTxn(addr, sp, app_addr, 1_000_000_000), signer=signer),
+)
+box_comp.add_method_call(
+    app_id,
+    c.get_method_by_name("box_write"),
+    addr,
+    sp,
+    signer,
+    method_args=[box_name, (123, 456)],
+    boxes=[(0, box_name)],
+)
+box_comp.add_method_call(
+    app_id,
+    c.get_method_by_name("box_read"),
+    addr,
+    sp,
+    signer,
+    method_args=[box_name],
+    # technically not needed since we already ref it in
+    # the previous txn in the same group
+    boxes=[(0, box_name)],
+)
+result = box_comp.execute(client, 4)
+print(f"box_read returned: {result.abi_results[-1].return_value}")
+
 
 comp = AtomicTransactionComposer()
 
-sp = client.suggested_params()
 comp.add_method_call(
     app_id, c.get_method_by_name("add"), addr, sp, signer, method_args=[1, 1]
 )
@@ -102,33 +118,34 @@ comp.add_method_call(
     method_args=[["this", "string", "is", "joined"]],
 )
 
-comp.add_method_call(
-    app_id,
-    c.get_method_by_name("concat_dynamic_arrays"),
-    addr,
-    sp,
-    signer,
-    method_args=[[1, 2, 3], [4, 5, 6]],
-)
-
-comp.add_method_call(
-    app_id,
-    c.get_method_by_name("concat_static_arrays"),
-    addr,
-    sp,
-    signer,
-    method_args=[[1, 2, 3], [4, 5, 6]],
-)
-
-
-comp.add_method_call(
-    app_id,
-    c.get_method_by_name("concat_dynamic_string_arrays"),
-    addr,
-    sp,
-    signer,
-    method_args=[["a", "b", "c"], ["d", "e", "f"]],
-)
+# Useable with abi_types.py contract
+# comp.add_method_call(
+#     app_id,
+#     c.get_method_by_name("concat_dynamic_arrays"),
+#     addr,
+#     sp,
+#     signer,
+#     method_args=[[1, 2, 3], [4, 5, 6]],
+# )
+#
+# comp.add_method_call(
+#     app_id,
+#     c.get_method_by_name("concat_static_arrays"),
+#     addr,
+#     sp,
+#     signer,
+#     method_args=[[1, 2, 3], [4, 5, 6]],
+# )
+#
+#
+# comp.add_method_call(
+#     app_id,
+#     c.get_method_by_name("concat_dynamic_string_arrays"),
+#     addr,
+#     sp,
+#     signer,
+#     method_args=[["a", "b", "c"], ["d", "e", "f"]],
+# )
 
 
 # drr = comp.dryrun(client)
