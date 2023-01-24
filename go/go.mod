@@ -2,9 +2,7 @@ module demo-abi
 
 go 1.17
 
-require (
-	github.com/algorand/go-algorand-sdk/v2 v2.0.0
-)
+require github.com/algorand/go-algorand-sdk/v2 v2.0.0
 
 require (
 	github.com/algorand/avm-abi v0.1.1 // indirect
