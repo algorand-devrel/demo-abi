@@ -1,7 +1,6 @@
 from algosdk.v2client.algod import AlgodClient
-from algosdk.future.transaction import Multisig  # type: ignore
+from algosdk.transaction import PaymentTxn, Multisig  # type: ignore
 from algosdk.account import generate_account
-from algosdk.future.transaction import PaymentTxn
 from algosdk.atomic_transaction_composer import (
     MultisigTransactionSigner,
     AtomicTransactionComposer,
