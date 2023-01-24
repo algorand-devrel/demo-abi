@@ -54,12 +54,11 @@ box_comp.add_method_call(
     # the previous txn in the same group
     boxes=[(0, box_name)],
 )
-result = box_comp.execute(client, 4)
-print(f"box_read returned: {result.abi_results[-1].return_value}")
+box_result = box_comp.execute(client, 4)
+print(f"box_read returned: {box_result.abi_results[-1].return_value}")
 
 
 comp = AtomicTransactionComposer()
-
 comp.add_method_call(
     app_id, c.get_method_by_name("add"), addr, sp, signer, method_args=[1, 1]
 )

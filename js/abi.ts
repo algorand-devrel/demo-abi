@@ -62,6 +62,8 @@ const algod_port = "4001";
   boxComp.addMethodCall({
     method: contract.getMethodByName("box_read"),
     methodArgs: [boxName],
+    // Not strictly necessary since we pass the box 
+    // in another transaction in the same group
     boxes: [{ appIndex: 0, name: boxName }],
     ...commonParams,
   });

@@ -84,8 +84,20 @@ func main() {
 
 	boxName := "cool_box"
 	var boxAtc = transaction.AtomicTransactionComposer{}
-	boxAtc.AddMethodCall(combine(mcp, getMethod(contract, "box_write"), []interface{}{[]byte(boxName), []interface{}{123, 456}}, types.AppBoxReference{AppID: 0, Name: []byte(boxName)}))
-	boxAtc.AddMethodCall(combine(mcp, getMethod(contract, "box_read"), []interface{}{[]byte(boxName)}, types.AppBoxReference{AppID: 0, Name: []byte(boxName)}))
+	boxAtc.AddMethodCall(combine(
+		mcp,
+		getMethod(contract, "box_write"),
+		[]interface{}{[]byte(boxName), []interface{}{123, 456}},
+		types.AppBoxReference{AppID: 0, Name: []byte(boxName)},
+	))
+	boxAtc.AddMethodCall(combine(
+		mcp,
+		getMethod(contract, "box_read"),
+		[]interface{}{[]byte(boxName)},
+		// Not strictly necessary since we pass the box
+		// in another transaction in the same group
+		types.AppBoxReference{AppID: 0, Name: []byte(boxName)},
+	))
 	result, err := boxAtc.Execute(client, context.Background(), 4)
 	if err != nil {
 		log.Fatalf("Failed to execute: %+v", err)
