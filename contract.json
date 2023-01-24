@@ -2,6 +2,34 @@
   "name": "demo-abi",
   "methods": [
     {
+      "name": "box_write",
+      "args": [
+        {
+          "type": "byte[]",
+          "name": "name"
+        },
+        {
+          "type": "(uint64,uint64)",
+          "name": "contents"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "box_read",
+      "args": [
+        {
+          "type": "byte[]",
+          "name": "name"
+        }
+      ],
+      "returns": {
+        "type": "(uint64,uint64)"
+      }
+    },
+    {
       "name": "add",
       "args": [
         {
@@ -130,6 +158,26 @@
       "desc": "Accept a list of strings, return the result of concating them all"
     },
     {
+      "name": "make_array",
+      "args": [
+        {
+          "type": "uint64",
+          "name": "a"
+        },
+        {
+          "type": "uint64",
+          "name": "b"
+        },
+        {
+          "type": "uint64",
+          "name": "c"
+        }
+      ],
+      "returns": {
+        "type": "uint64[]"
+      }
+    },
+    {
       "name": "sum_array",
       "args": [
         {
@@ -229,7 +277,7 @@
       "returns": {
         "type": "uint64"
       },
-      "desc": "Lots of args here, internally they get tuple'd after the 15th arg, but atc and router handles this for us"
+      "desc": "Lots of args here, internally they get tuple'd after the 15th arg,\nbut atc and router handles this for us"
     },
     {
       "name": "min_bal",
@@ -255,7 +303,7 @@
       "returns": {
         "type": "void"
       },
-      "desc": "Just a demonstration of no return value or `void` Omit the `*, output: abi...` from the method signature and void will be used as the return value"
+      "desc": "Just a demonstration of no return value or `void`\nOmit the `*, output: abi...` from the method signature and void will be used as the return value"
     },
     {
       "name": "txntest",
@@ -276,9 +324,8 @@
       "returns": {
         "type": "uint64"
       },
-      "desc": "Useless method that just demonstrates specifying a transaction in the method signature"
+      "desc": "Useless method that just demonstrates specifying a\ntransaction in the method signature"
     }
   ],
-  "desc": null,
   "networks": {}
 }

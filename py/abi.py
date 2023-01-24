@@ -1,14 +1,35 @@
-from algosdk import mnemonic
-from algosdk.v2client.algod import *
-from algosdk.atomic_transaction_composer import *
-from algosdk.future.transaction import *
-from algosdk.abi import *
-from algosdk.mnemonic import *
-from algosdk.account import *
+from algosdk.v2client.algod import AlgodClient
+from algosdk.atomic_transaction_composer import (
+    AccountTransactionSigner,
+    AtomicTransactionComposer,
+    TransactionWithSigner,
+)
+from algosdk.transaction import PaymentTxn, AssetCreateTxn
+from algosdk.abi import Contract
 
 from sandbox import get_accounts
 
 client = AlgodClient("a" * 64, "http://localhost:4001")
+
+
+addr, sk = get_accounts()[0]
+
+print(addr)
+
+act = AssetCreateTxn(
+    sender=addr,
+    sp=client.suggested_params(),
+    total=1000,
+    decimals=1,
+    default_frozen=False,
+    manager=addr,
+    asset_name="asdfasdf",
+    unit_name="aaa",
+)
+
+stxn = act.sign(sk)
+print(stxn.__dict__)
+
 
 with open("../contract.json") as f:
     js = f.read()
@@ -18,7 +39,6 @@ with open("../.app_id") as f:
 
 c = Contract.from_json(js)
 
-addr, sk = get_accounts()[0]
 signer = AccountTransactionSigner(sk)
 
 comp = AtomicTransactionComposer()
@@ -82,6 +102,35 @@ comp.add_method_call(
     method_args=[["this", "string", "is", "joined"]],
 )
 
+comp.add_method_call(
+    app_id,
+    c.get_method_by_name("concat_dynamic_arrays"),
+    addr,
+    sp,
+    signer,
+    method_args=[[1, 2, 3], [4, 5, 6]],
+)
+
+comp.add_method_call(
+    app_id,
+    c.get_method_by_name("concat_static_arrays"),
+    addr,
+    sp,
+    signer,
+    method_args=[[1, 2, 3], [4, 5, 6]],
+)
+
+
+comp.add_method_call(
+    app_id,
+    c.get_method_by_name("concat_dynamic_string_arrays"),
+    addr,
+    sp,
+    signer,
+    method_args=[["a", "b", "c"], ["d", "e", "f"]],
+)
+
+
 # drr = comp.dryrun(client)
 # for txn in drr.trace.txns:
 #    if txn.app_call_rejected():
@@ -89,4 +138,6 @@ comp.add_method_call(
 
 resp = comp.execute(client, 2)
 for result in resp.abi_results:
+    # print(result.decode_error)
+    # print(result.raw_value.hex())
     print(f"{result.method.name} => {result.return_value}")

@@ -10,6 +10,29 @@ creator=${accts[0]}
 
 app_id=`cat ../.app_id`
 
+echo "Funding app account"
+app_addr=`$GOAL app info --app-id $app_id | grep 'Application account' | awk '{print $3}' | tr -d '\r'`
+$GOAL clerk send -f $creator -t $app_addr -a 1000000000
+
+box_name="cool_box"
+# use b64 to pass named box
+b64_box_name=`echo -n $box_name | base64 -w0`
+# Convert to byte array
+encoded_box_name=`echo -n $box_name | od -td1 -An | tr -s [:space:] ',' | sed 's/^,//g' | sed 's/,$//g'`
+echo "Calling box_write(byte[],(uint64,uint64))void with $box_name and '(123,456)'"
+$GOAL app method --app-id $app_id \
+    --method "box_write(byte[],(uint64,uint64))void" \
+    --arg "[$encoded_box_name]" --arg [123,456] --from ${accts[1]} \
+    --box "0,b64:$b64_box_name" 
+echo ""
+
+echo "Calling box_read(byte[])(uint64,uint64) with $box_name"
+$GOAL app method --app-id $app_id \
+    --method "box_read(byte[])(uint64,uint64)" \
+    --arg "[$encoded_box_name]" --from ${accts[1]} \
+    --box "0,b64:$b64_box_name" 
+echo ""
+
 echo "Calling add(uint64,uint64)uint64) with 2 and 3."
 $GOAL app method --app-id $app_id \
     --method "add(uint64,uint64)uint64" \
@@ -46,13 +69,6 @@ $GOAL app method --app-id $app_id \
     --arg '"My Message"' --from ${accts[1]}
 echo ""
 
-echo "Calling txntest(uint64,pay,uint64)uint64 with 2, Payment Transaction, and 3."
-$GOAL clerk send --amount 0 --from ${accts[1]} \
-    --to ${accts[1]} -o txntest_pay.txn
-$GOAL app method --app-id $app_id \
-    --method "txntest(uint64,pay,uint64)uint64" \
-    --arg 2 --arg txntest_pay.txn --arg 3 --from ${accts[1]}
-echo ""
 
 echo "Calling concat_strings(string[])string with [\"My\",\"Message\"]."
 $GOAL app method --app-id $app_id \
@@ -76,9 +92,17 @@ $GOAL app method --app-id $app_id \
     --arg ${accts[1]} --from ${accts[1]}
 echo ""
 
+echo "Calling txntest(uint64,pay,uint64)uint64 with 2, Payment Transaction, and 1000."
+$GOAL clerk send --amount 2 --from ${accts[1]} \
+    --to ${accts[1]} -o txntest_pay.txn
+$GOAL app method --app-id $app_id \
+    --method "txntest(uint64,pay,uint64)uint64" \
+    --arg 2 --arg txntest_pay.txn --arg 1000 --from ${accts[1]}
+echo ""
+
+
 #echo "Calling tupler((string,uint64,string))uint64 with (\"My\",42,\"Message\")."
 #$GOAL app method --app-id $app_id \
 #    --method "tupler((string,uint64,string))uint64" \
-#    --arg '("My",42,"Message")' --from ${accts[1]}
+#    --arg ['"My"',42,'"Message"'] --from ${accts[1]}
 #echo ""
-

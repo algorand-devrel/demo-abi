@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/algorand/go-algorand-sdk/client/kmd"
-	"github.com/algorand/go-algorand-sdk/crypto"
+	"github.com/algorand/go-algorand-sdk/v2/client/kmd"
+	"github.com/algorand/go-algorand-sdk/v2/crypto"
 )
 
 const (

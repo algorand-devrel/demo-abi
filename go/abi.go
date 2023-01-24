@@ -9,10 +9,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/algorand/go-algorand-sdk/abi"
-	"github.com/algorand/go-algorand-sdk/client/v2/algod"
-	"github.com/algorand/go-algorand-sdk/future"
-	"github.com/algorand/go-algorand-sdk/types"
+	"github.com/algorand/go-algorand-sdk/v2/abi"
+	"github.com/algorand/go-algorand-sdk/v2/client/v2/algod"
+	"github.com/algorand/go-algorand-sdk/v2/crypto"
+	"github.com/algorand/go-algorand-sdk/v2/transaction"
+	"github.com/algorand/go-algorand-sdk/v2/types"
 )
 
 var (
@@ -53,15 +54,27 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to parse int: %+v", err)
 	}
+	app_addr := crypto.GetApplicationAddress(app_id)
 
 	sp, err := client.SuggestedParams().Do(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to get suggeted params: %+v", err)
 	}
 
-	signer := future.BasicAccountTransactionSigner{Account: acct}
+	// Fund app address
+	paytxn, err := transaction.MakePaymentTxn(acct.Address.String(), app_addr.String(), 1_000_000_000, nil, "", sp)
+	if err != nil {
+		log.Fatalf("Failed to create payment transaction: %+v", err)
+	}
+	_, signedPay, err := crypto.SignTransaction(acct.PrivateKey, paytxn)
+	if err != nil {
+		log.Fatalf("Failed to sign transaction: %+v", err)
+	}
+	client.SendRawTransaction(signedPay).Do(context.Background())
 
-	mcp := future.AddMethodCallParams{
+	// Create a signer and some common parameters
+	signer := transaction.BasicAccountTransactionSigner{Account: acct}
+	mcp := transaction.AddMethodCallParams{
 		AppID:           app_id,
 		Sender:          acct.Address,
 		SuggestedParams: sp,
@@ -69,8 +82,18 @@ func main() {
 		Signer:          signer,
 	}
 
+	boxName := "cool_box"
+	var boxAtc = transaction.AtomicTransactionComposer{}
+	boxAtc.AddMethodCall(combine(mcp, getMethod(contract, "box_write"), []interface{}{[]byte(boxName), []interface{}{123, 456}}, types.AppBoxReference{AppID: 0, Name: []byte(boxName)}))
+	boxAtc.AddMethodCall(combine(mcp, getMethod(contract, "box_read"), []interface{}{[]byte(boxName)}, types.AppBoxReference{AppID: 0, Name: []byte(boxName)}))
+	result, err := boxAtc.Execute(client, context.Background(), 4)
+	if err != nil {
+		log.Fatalf("Failed to execute: %+v", err)
+	}
+	log.Printf("Read from box: '%+v'", result.MethodResults[len(result.MethodResults)-1].ReturnValue)
+
 	// Skipping error checks below during AddMethodCall and txn create
-	var atc = future.AtomicTransactionComposer{}
+	var atc = transaction.AtomicTransactionComposer{}
 
 	// /// Uint32 args/return
 	atc.AddMethodCall(combine(mcp, getMethod(contract, "add"), []interface{}{1, 1}))
@@ -88,8 +111,8 @@ func main() {
 	atc.AddMethodCall(combine(mcp, getMethod(contract, "concat_strings"), []interface{}{[]string{"this", "string", "is", "joined"}}))
 
 	// Txn arg, uint return
-	txn, _ := future.MakePaymentTxn(acct.Address.String(), acct.Address.String(), 10000, nil, "", sp)
-	stxn := future.TransactionWithSigner{Txn: txn, Signer: signer}
+	txn, _ := transaction.MakePaymentTxn(acct.Address.String(), acct.Address.String(), 10000, nil, "", sp)
+	stxn := transaction.TransactionWithSigner{Txn: txn, Signer: signer}
 	atc.AddMethodCall(combine(mcp, getMethod(contract, "txntest"), []interface{}{10000, stxn, 1000}))
 
 	// >14 args, so they get tuple encoded automatically
@@ -111,6 +134,7 @@ func main() {
 	}
 
 	for _, r := range ret.MethodResults {
+		log.Printf("%+v", r.TransactionInfo.Logs)
 		log.Printf("%s returned %+v", r.Method.Name, r.ReturnValue)
 	}
 }
@@ -123,8 +147,9 @@ func getMethod(c *abi.Contract, name string) abi.Method {
 	return m
 }
 
-func combine(mcp future.AddMethodCallParams, m abi.Method, a []interface{}) future.AddMethodCallParams {
+func combine(mcp transaction.AddMethodCallParams, m abi.Method, a []interface{}, boxes ...types.AppBoxReference) transaction.AddMethodCallParams {
 	mcp.Method = m
 	mcp.MethodArgs = a
+	mcp.BoxReferences = boxes
 	return mcp
 }
